@@ -1,0 +1,1 @@
+Vendor\Premake\bin\premake5.exe vs2019
