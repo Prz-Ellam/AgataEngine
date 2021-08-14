@@ -22,6 +22,23 @@ Mesh::Mesh(const std::vector<Vertex3D>& vertex, const std::vector<uint32_t>& ind
 
 }
 
+Mesh::Mesh(const std::vector<glm::vec3>& vertex, const std::vector<uint32_t>& indices) {
+
+	m_VAO = new VertexArray();
+
+	m_VertexCount = vertex.size();
+	m_VBO = new VertexBuffer(vertex.data(), m_VertexCount * sizeof(glm::vec3));
+	m_IndexCount = indices.size();
+	m_IBO = new IndexBuffer(indices.data(), m_IndexCount * sizeof(uint32_t));
+
+	std::vector<BufferLayout> layouts;
+	layouts.push_back(BufferLayout(0, DataType::Float3));
+
+	m_VAO->attachVertexBuffer(m_VBO, layouts);
+	m_VAO->attachIndexBuffer(m_IBO);
+
+}
+
 Mesh::Mesh(Mesh&& other) noexcept {
 
 	m_VAO = other.m_VAO;

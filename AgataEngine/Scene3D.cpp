@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 #include "Scene3D.h"
 #include "Log.h"
+#include "Timer.h"
 #include <Windows.h>
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
@@ -27,7 +28,7 @@ void Scene3D::init() {
 
 	m_Window = new Window(1280, 720, "Agata Engine"s);
 	m_Window->setVSync(true);
-	m_Window->setIcons("images.jpg"s);
+	//m_Window->setIcons("images.jpg"s);
 
 	m_Camera = new Camera(PerspectiveCameraProps(45.0f, (float)m_Window->getWidth() / m_Window->getHeight(), 0.1f, 1000.0f), 40.0f, 800.0f);
 	m_InvertCamera = new Camera(PerspectiveCameraProps(45.0f, (float)m_Window->getWidth() / m_Window->getHeight(), 0.1f, 1000.0f), 40.0f, 800.0f);
@@ -53,46 +54,62 @@ void Scene3D::init() {
 	m_Renderer.backCullface();
 	lightAngle = 180.0f;
 
-	model = ModelBuilder().
-		ModelPath("Assets\\lantern.obj"s).
-		Position(glm::vec3(6.10f, 2.4f, 11.12f)).
-		Rotation(glm::vec3(0.0f)).
-		Scale(glm::vec3(35.0f)).
-		DiffuseTexture("Assets\\diffuse.jpg"s).
-		//SpecularTexture("Assets\\barrelSpecular.png"s).
-		NormalTexture("Assets\\normal.png"s).
-		AmbientMaterial(glm::vec3(0.75f)).
-		DiffuseMaterial(glm::vec3(0.85f)).
-		SpecularMaterial(glm::vec3(1.0f)).
-		ShininessMaterial(32).
-		BuildHeap();
+	{
+		Onfer::Timer modelBuilder("ModelBuilder");
+		model = ModelBuilder().
+			ModelPath("Assets\\lantern.obj"s).
+			Position(glm::vec3(6.10f, 2.4f, 11.12f)).
+			Rotation(glm::vec3(0.0f)).
+			Scale(glm::vec3(35.0f)).
+			DiffuseTexture("Assets\\diffuse.jpg"s).
+			//SpecularTexture("Assets\\barrelSpecular.png"s).
+			NormalTexture("Assets\\normal.png"s).
+			AmbientMaterial(glm::vec3(0.75f)).
+			DiffuseMaterial(glm::vec3(0.85f)).
+			SpecularMaterial(glm::vec3(1.0f)).
+			ShininessMaterial(32).
+			BuildHeap();
+	}
 
-	terrain = TerrainBuilder().
-		RedTexture("Assets\\snow.jpg"s).
-		GreenTexture("Imagenes\\rock_vulcano.jpg"s).
-		BlueTexture("Assets\\dirt.jpg"s).
-		BlackTexture("Imagenes\\Zacate.png"s).
-		BlendMap("Mini_BlendMap.jpg"s).
-		HeightMap("Mini_HeightMap.jpg"s).
-		RedNormal("Assets\\snowNorm.jpg"s).
-		GreenNormal("Imagenes\\Rock_Vulcano_Normal.png"s).
-		BlueNormal("Assets\\dirtNorm.jpg"s).
-		BlackNormal("Imagenes\\ZacateNormal.png"s).
-		BuildHeap();
+	{
+		Onfer::Timer terrainBuilder("TerrainBuilder");
+		terrain = TerrainBuilder().
+			RedTexture("Assets\\snow.jpg"s).
+			GreenTexture("Multi1.jpg"s).
+			BlueTexture("Assets\\dirt.jpg"s).
+			BlackTexture("grass.jpg"s).
+			BlendMap("Mini_BlendMap.jpg"s).
+			HeightMap("Mini_HeightMap.jpg"s).
+			RedNormal("Assets\\snowNorm.jpg"s).
+			//GreenNormal(".png"s).
+			BlueNormal("Assets\\dirtNorm.jpg"s).
+			//BlackNormal(".png"s).
+			BuildHeap();
+	}
 
-	skybox = new Skybox("right.png", "left.png", "top.png", "bottom.png", "front.png", "back.png", 500.0f);
+	{
+		Onfer::Timer skyboxBuilder("SkyBoxBuilder");
+		skybox = new Skybox("right.png", "left.png", "top.png", "bottom.png", "front.png", "back.png", 500.0f);
+	}
 	billboard = new Billboard("Assets\\fireNoise.png"s, glm::vec3(11.302f, 2.518f, 12.408f), glm::vec3(1.0f));
 
 	spyGlassZoom = new Zoom("Assets\\zoom.jpg"s);
 
-	shaderModel = std::make_shared<Shader>("ModelVertex.glsl", "ModelFragment.glsl");
-	shaderTerrain = std::make_shared<Shader>("TerrainVertex.glsl", "TerrainFragment.glsl");
-	shaderSkybox = std::make_shared<Shader>("SkyBoxVertex.glsl", "SkyBoxFragment.glsl");
-	shaderBill = std::make_shared<Shader>("FireVertex.glsl", "FireFragment.glsl");
-	shaderWater = std::make_shared<Shader>("WaterVertex.glsl", "WaterFragment.glsl");
-	shaderZoom = std::make_shared<Shader>("ZoomVertex.glsl", "ZoomFragment.glsl");
+	{
+		Onfer::Timer shaders("Shaders");
+		shaderModel = std::make_shared<Shader>("Assets//Shaders//ModelVertex.glsl", "Assets//Shaders//ModelFragment.glsl");
+		shaderTerrain = std::make_shared<Shader>("Assets//Shaders//TerrainVertex.glsl", "Assets//Shaders//TerrainFragment.glsl");
+		shaderSkybox = std::make_shared<Shader>("Assets//Shaders//SkyBoxVertex.glsl", "Assets//Shaders//SkyBoxFragment.glsl");
+		shaderBill = std::make_shared<Shader>("Assets//Shaders//FireVertex.glsl", "Assets//Shaders//FireFragment.glsl");
+		shaderWater = std::make_shared<Shader>("Assets//Shaders//WaterVertex.glsl", "Assets//Shaders//WaterFragment.glsl");
+		shaderZoom = std::make_shared<Shader>("Assets//Shaders//ZoomVertex.glsl", "Assets//Shaders//ZoomFragment.glsl");
+	}
 
-	water = new Water(glm::vec3(5.0f, 1.11f, 4.658f), glm::vec3(4.0f, 1.0f, 5.0f), "dudv.png", "normalMap.png", 480, 360);
+	{
+		Onfer::Timer wate("Water Loading");
+		water = new Water(glm::vec3(5.0f, 1.11f, 4.658f), glm::vec3(4.0f, 1.0f, 5.0f), "dudv.png", "normalMap.png", 480, 360);
+	}
+
 	light = new Light(glm::vec3(11.0f, 0.0f, -10.0f), glm::vec3(255.0f / 255.0f, 128.0f / 255.0f, 128.0f / 255.0f));
 
 }

@@ -30,11 +30,15 @@ void VertexArray::attachVertexBuffer(VertexBuffer* vb, std::vector<BufferLayout>
 	glBindVertexArray(m_ID);
 	vb->bind();
 
-	uint32_t stride = 0;
+	uint32_t offset = 0;
+	size_t stride = 0;
+	for (int i = 0; i < layouts.size(); i++) {
+		stride += layouts[i].size;
+	}
 	for (const auto& layout : layouts) {
 		glEnableVertexAttribArray(layout.index);
-		glVertexAttribPointer(layout.index, layout.count, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (const void*)stride);
-		stride += layout.size;
+		glVertexAttribPointer(layout.index, layout.count, GL_FLOAT, GL_FALSE, stride, (const void*)offset);
+		offset += layout.size;
 	}
 	glBindVertexArray(0);
 

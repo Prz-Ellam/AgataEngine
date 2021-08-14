@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 #include "Texture3D.h"
 #include <stb/stb_image.h>
+#include "Timer.h"
 
 Texture3D::Texture3D(const std::string& right, const std::string& left, const std::string& top, const std::string& bottom,
 	const std::string& front, const std::string& back) {

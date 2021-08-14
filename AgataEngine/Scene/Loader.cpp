@@ -234,17 +234,17 @@ bool Loader::loadCube(std::vector<Vertex3D>& vertices, std::vector<uint32_t>& in
 	return true;
 }
 
-std::tuple<std::vector<Vertex3D>, std::vector<uint32_t>> Loader::loadSkyBox(float size) {
+std::tuple<std::vector<glm::vec3>, std::vector<uint32_t>> Loader::loadSkyBox(float size) {
 
-	std::vector<Vertex3D> verticesAux(8);
-	verticesAux[0].coords = glm::vec3(-size, -size, size);
-	verticesAux[1].coords = glm::vec3(size, -size, size);
-	verticesAux[2].coords = glm::vec3(size, -size, -size);
-	verticesAux[3].coords = glm::vec3(-size, -size, -size);
-	verticesAux[4].coords = glm::vec3(-size, size, size);
-	verticesAux[5].coords = glm::vec3(size, size, size);
-	verticesAux[6].coords = glm::vec3(size, size, -size);
-	verticesAux[7].coords = glm::vec3(-size, size, -size);
+	std::vector<glm::vec3> verticesAux(8);
+	verticesAux[0] = glm::vec3(-size, -size, size);
+	verticesAux[1] = glm::vec3(size, -size, size);
+	verticesAux[2] = glm::vec3(size, -size, -size);
+	verticesAux[3] = glm::vec3(-size, -size, -size);
+	verticesAux[4] = glm::vec3(-size, size, size);
+	verticesAux[5] = glm::vec3(size, size, size);
+	verticesAux[6] = glm::vec3(size, size, -size);
+	verticesAux[7] = glm::vec3(-size, size, -size);
 
 	std::vector<uint32_t> indicesAux(36);
 	indicesAux = { 1, 2, 6,

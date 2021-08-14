@@ -2,6 +2,7 @@
 #include "Skybox.h"
 #include "Loader.h"
 #include "Renderer.h"
+#include "Timer.h"
 
 Skybox::Skybox(const std::string& right, const std::string& left, const std::string& top, const std::string& bottom,
 	const std::string& front, const std::string& back, float size) : m_Texture(right, left, top, bottom, front, back) {
