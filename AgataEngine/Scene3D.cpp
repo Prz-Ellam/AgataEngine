@@ -89,7 +89,8 @@ void Scene3D::init() {
 
 	{
 		Onfer::Timer skyboxBuilder("SkyBoxBuilder");
-		skybox = new Skybox("right.png", "left.png", "top.png", "bottom.png", "front.png", "back.png", 500.0f);
+		skybox = new Skybox("Assets//Images//right.png", "Assets//Images//left.png", "Assets//Images//top.png", 
+			"Assets//Images//bottom.png", "Assets//Images//front.png", "Assets//Images//back.png", 500.0f);
 	}
 	billboard = new Billboard("Assets\\fireNoise.png"s, glm::vec3(11.302f, 2.518f, 12.408f), glm::vec3(1.0f));
 
