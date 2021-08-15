@@ -15,6 +15,8 @@ public:
 	~Loader() = delete;
 	static bool loadOBJ(const std::string& filePath, std::vector<Vertex3D>& vertices, std::vector<unsigned int>& indices);
 
+	static bool loadDAE(const std::string& filePath, std::vector<AnimVertex>& vertices, std::vector<unsigned int>& indices);
+
 	static bool loadCube(std::vector<Vertex3D>& vertices, std::vector<uint32_t>& indices);
 
 	static std::tuple<std::vector<glm::vec3>, std::vector<uint32_t>> loadSkyBox(float size);

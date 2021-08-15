@@ -128,8 +128,120 @@ bool Loader::loadOBJ(const std::string& filePath, std::vector<Vertex3D>& vertice
 	}
 
 	vertices = verticesAux;
-	float* vs = (float*)&verticesAux;
 	objReader.close();
+	return true;
+
+}
+
+bool Loader::loadDAE(const std::string& filePath, std::vector<AnimVertex>& vertices, std::vector<unsigned int>& indices) {
+
+	std::ifstream colladaReader(filePath);
+
+	if (!colladaReader.is_open()) {
+		return false;
+	}
+
+	std::vector<glm::vec3> tempVertPos;
+	std::vector<glm::vec2> tempVertUV;
+	std::vector<glm::vec3> tempVertNorm;
+
+	std::vector<AnimVertex> verticesAux;
+
+	while (!colladaReader.eof()) {
+
+		unsigned int size;
+		std::string line;
+		std::stringstream ss;
+		colladaReader >> size;
+		std::getline(colladaReader, line);
+		std::getline(colladaReader, line);
+		ss.str(line);
+
+		for (int i = 0; i < size; i++) {
+			glm::vec3 v;
+			ss >> v.x >> v.y >> v.z;
+			v.x /= 39.3701;
+			v.y /= 39.3701;
+			v.z /= 39.3701;
+			tempVertPos.push_back(v);
+		}
+
+		colladaReader >> size;
+		std::getline(colladaReader, line);
+		std::getline(colladaReader, line);
+		std::stringstream().swap(ss);
+		ss.str(line);
+
+		for (int i = 0; i < size; i++) {
+			glm::vec3 vn;
+			ss >> vn.x >> vn.y >> vn.z;
+			tempVertNorm.push_back(vn);
+		}
+
+		colladaReader >> size;
+		std::getline(colladaReader, line);
+		std::getline(colladaReader, line);
+		std::stringstream().swap(ss);
+		ss.str(line);
+
+		for (int i = 0; i < size; i++) {
+			glm::vec2 vt;
+			ss >> vt.x >> vt.y;
+			tempVertUV.push_back(vt);
+		}
+
+		colladaReader >> size;
+		std::getline(colladaReader, line);
+		std::getline(colladaReader, line);
+		std::stringstream().swap(ss);
+		ss.str(line);
+		verticesAux.resize(size * 3);
+		indices.resize(size * 3);
+
+		for (int i = 0; i < size * 3; i++) {
+			glm::vec4 mat;
+			ss >> mat.x >> mat.y >> mat.z >> mat.w;
+			verticesAux[i].coords = tempVertPos[mat.x];
+			verticesAux[i].normals = tempVertNorm[mat.y];
+			verticesAux[i].uv = tempVertUV[mat.z];
+			indices[i] = i;
+		}
+
+		for (uint32_t i = 0; i < verticesAux.size(); i += 3) {
+
+			glm::vec3& v0 = verticesAux[i + 0].coords;
+			glm::vec3& v1 = verticesAux[i + 1].coords;
+			glm::vec3& v2 = verticesAux[i + 2].coords;
+
+			glm::vec2& uv0 = verticesAux[i + 0].uv;
+			glm::vec2& uv1 = verticesAux[i + 1].uv;
+			glm::vec2& uv2 = verticesAux[i + 2].uv;
+
+			glm::vec3 deltaPos1 = v1 - v0;
+			glm::vec3 deltaPos2 = v2 - v0;
+
+			glm::vec2 deltaUV1 = uv1 - uv0;
+			glm::vec2 deltaUV2 = uv2 - uv0;
+
+			float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+
+			glm::vec3 tangent = r * (deltaUV2.y * deltaPos1 - deltaUV1.y * deltaPos2);
+			glm::vec3 bitangent = r * (deltaUV1.x * deltaPos2 - deltaUV2.x * deltaPos1);
+
+			verticesAux[i + 0].tangents = tangent;
+			verticesAux[i + 1].tangents = tangent;
+			verticesAux[i + 2].tangents = tangent;
+
+			verticesAux[i + 0].bitangents = bitangent;
+			verticesAux[i + 1].bitangents = bitangent;
+			verticesAux[i + 2].bitangents = bitangent;
+
+		}
+
+	}
+
+	vertices = verticesAux;
+	colladaReader.close();
 	return true;
 
 }

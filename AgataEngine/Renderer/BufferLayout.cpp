@@ -10,6 +10,12 @@ Vertex3D::Vertex3D(glm::vec3 coords, glm::vec2 uv, glm::vec3 normals, glm::vec3 
 
 }
 
+AnimVertex::AnimVertex(glm::vec3 coords, glm::vec2 uv, glm::vec3 normals, glm::vec3 tangents, glm::vec3 bitangents,
+	glm::ivec3 joints, glm::vec3 weights) : coords(coords), uv(uv), normals(normals), tangents(tangents), bitangents(bitangents),
+	joints(joints), weights(weights) {
+
+}
+
 Vertex3D::Vertex3D() {}
 
 size_t BufferLayout::getDataTypeSize(DataType type) {
@@ -19,6 +25,7 @@ size_t BufferLayout::getDataTypeSize(DataType type) {
 		case DataType::Float2:	return sizeof(float) * 2;
 		case DataType::Float3:	return sizeof(float) * 3;
 		case DataType::Float4:	return sizeof(float) * 4;
+		case DataType::Int3:	return sizeof(int) * 3;
 	}
 
 }
@@ -30,6 +37,7 @@ uint32_t BufferLayout::getDataCount(DataType type) {
 		case DataType::Float2:	return 2;
 		case DataType::Float3:	return 3;
 		case DataType::Float4:	return 4;
+		case DataType::Int3:	return 3;
 	}
 
 }

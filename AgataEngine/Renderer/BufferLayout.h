@@ -12,7 +12,8 @@ enum class DataType {
 	Float,
 	Float2,
 	Float3,
-	Float4
+	Float4,
+	Int3
 };
 
 class Vertex3D {
@@ -24,6 +25,19 @@ public:
 	glm::vec3 normals;
 	glm::vec3 tangents;
 	glm::vec3 bitangents;
+};
+
+class AnimVertex {
+public:
+	AnimVertex(glm::vec3 coords, glm::vec2 uv, glm::vec3 normals, glm::vec3 tangents, glm::vec3 bitangents, 
+		glm::ivec3 joints, glm::vec3 weights);
+	glm::vec3 coords;
+	glm::vec2 uv;
+	glm::vec3 normals;
+	glm::vec3 tangents;
+	glm::vec3 bitangents;
+	glm::ivec3 joints;
+	glm::vec3 weights;
 };
 
 class BufferLayout {

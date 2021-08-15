@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 #include "Scene3D.h"
 #include "Log.h"
+#include "Loader.h"
 #include "Timer.h"
 #include <Windows.h>
 #include <imgui/imgui.h>
@@ -59,8 +60,8 @@ void Scene3D::init() {
 		model = ModelBuilder().
 			ModelPath("Assets\\lantern.obj"s).
 			Position(glm::vec3(6.10f, 2.4f, 11.12f)).
-			Rotation(glm::vec3(0.0f)).
-			Scale(glm::vec3(35.0f)).
+			Rotation(glm::vec3(-90.0f, 0.0f, 0.0f)).
+			Scale(glm::vec3(10.0f)).
 			DiffuseTexture("Assets\\diffuse.jpg"s).
 			//SpecularTexture("Assets\\barrelSpecular.png"s).
 			NormalTexture("Assets\\normal.png"s).
