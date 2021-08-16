@@ -289,6 +289,8 @@ using namespace std::literals::string_literals;
 //
 //}
 
+#include "Joint.h"
+
 int main(int argc, char** argv) {
 
 	Scene* scene = new Scene3D();

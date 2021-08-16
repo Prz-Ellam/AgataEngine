@@ -30,13 +30,14 @@ public:
 class AnimVertex {
 public:
 	AnimVertex(glm::vec3 coords, glm::vec2 uv, glm::vec3 normals, glm::vec3 tangents, glm::vec3 bitangents, 
-		glm::ivec3 joints, glm::vec3 weights);
+		glm::vec3 joints, glm::vec3 weights);
+	AnimVertex() = default;
 	glm::vec3 coords;
 	glm::vec2 uv;
 	glm::vec3 normals;
 	glm::vec3 tangents;
 	glm::vec3 bitangents;
-	glm::ivec3 joints;
+	glm::vec3 joints;
 	glm::vec3 weights;
 };
 

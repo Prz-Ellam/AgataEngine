@@ -59,7 +59,7 @@ void Scene3D::init() {
 		Onfer::Timer modelBuilder("ModelBuilder");
 		model = ModelBuilder().
 			ModelPath("Assets\\lantern.obj"s).
-			Position(glm::vec3(6.10f, 2.4f, 11.12f)).
+			Position(glm::vec3(6.10f, 1.4f, 11.12f)).
 			Rotation(glm::vec3(-90.0f, 0.0f, 0.0f)).
 			Scale(glm::vec3(10.0f)).
 			DiffuseTexture("Assets\\diffuse.jpg"s).

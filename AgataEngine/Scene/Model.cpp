@@ -26,11 +26,11 @@ Model::Model(const std::string& filePath, const std::string& diffuseTex, const s
 	: m_Position(position), m_Rotation(rotation), m_Scale(scale),
 	m_Material(diffuseTex, specularTex, normalTex, ambientMaterial, diffuseMaterial, specularMaterial, shininessMaterial) {
 
-	std::vector<Vertex3D> vertices;
+	std::vector<AnimVertex> vertices;
 	std::vector<uint32_t> indices;
 
-	//Loader::loadDAE("Assets//character.txt", vertices, indices);
-	Loader::loadOBJ(filePath, vertices, indices);
+	Loader::loadDAE("Assets//character.txt", vertices, indices);
+	//Loader::loadOBJ(filePath, vertices, indices);
 
 	m_Mesh = new Mesh(vertices, indices);
 

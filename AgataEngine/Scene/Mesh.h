@@ -10,6 +10,7 @@
 class Mesh {
 public:
 	Mesh(const std::vector<Vertex3D>& vertex, const std::vector<uint32_t>& indices);
+	Mesh(const std::vector<AnimVertex>& vertex, const std::vector<uint32_t>& indices);
 	Mesh(const std::vector<glm::vec3>& vertex, const std::vector<uint32_t>& indices);
 	Mesh(const Mesh& other) = delete;
 	Mesh(Mesh&& other) noexcept;

@@ -11,7 +11,7 @@ Vertex3D::Vertex3D(glm::vec3 coords, glm::vec2 uv, glm::vec3 normals, glm::vec3 
 }
 
 AnimVertex::AnimVertex(glm::vec3 coords, glm::vec2 uv, glm::vec3 normals, glm::vec3 tangents, glm::vec3 bitangents,
-	glm::ivec3 joints, glm::vec3 weights) : coords(coords), uv(uv), normals(normals), tangents(tangents), bitangents(bitangents),
+	glm::vec3 joints, glm::vec3 weights) : coords(coords), uv(uv), normals(normals), tangents(tangents), bitangents(bitangents),
 	joints(joints), weights(weights) {
 
 }

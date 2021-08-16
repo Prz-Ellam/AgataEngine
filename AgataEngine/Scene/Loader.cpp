@@ -1,4 +1,6 @@
 #include "Loader.h"
+#include "Log.h"
+#include <Windows.h>
 
 bool Loader::loadOBJ(const std::string& filePath, std::vector<Vertex3D>& vertices, std::vector<unsigned int>& indices) {
 
@@ -144,14 +146,18 @@ bool Loader::loadDAE(const std::string& filePath, std::vector<AnimVertex>& verti
 	std::vector<glm::vec3> tempVertPos;
 	std::vector<glm::vec2> tempVertUV;
 	std::vector<glm::vec3> tempVertNorm;
+	std::vector<glm::vec3> tempJoints;
+	std::vector<glm::vec3> tempWeights;
 
 	std::vector<AnimVertex> verticesAux;
 
 	while (!colladaReader.eof()) {
 
-		unsigned int size;
+		uint32_t size;
 		std::string line;
 		std::stringstream ss;
+
+		// Vertices reader
 		colladaReader >> size;
 		std::getline(colladaReader, line);
 		std::getline(colladaReader, line);
@@ -166,6 +172,7 @@ bool Loader::loadDAE(const std::string& filePath, std::vector<AnimVertex>& verti
 			tempVertPos.push_back(v);
 		}
 
+		// Normals reader
 		colladaReader >> size;
 		std::getline(colladaReader, line);
 		std::getline(colladaReader, line);
@@ -178,6 +185,7 @@ bool Loader::loadDAE(const std::string& filePath, std::vector<AnimVertex>& verti
 			tempVertNorm.push_back(vn);
 		}
 
+		// UV reader
 		colladaReader >> size;
 		std::getline(colladaReader, line);
 		std::getline(colladaReader, line);
@@ -190,6 +198,58 @@ bool Loader::loadDAE(const std::string& filePath, std::vector<AnimVertex>& verti
 			tempVertUV.push_back(vt);
 		}
 
+		// Weight reader
+		colladaReader >> size;
+		std::getline(colladaReader, line);
+		std::getline(colladaReader, line);
+		std::stringstream().swap(ss);
+		ss.str(line);
+		std::vector<float> weights;
+		weights.resize(size);
+		
+		for (int i = 0; i < size; i++) {
+			float weight;
+			ss >> weight;
+			weights[i] = weight;
+		}
+		
+		// Vertex Weight Count
+		colladaReader >> size;
+		std::getline(colladaReader, line);
+		std::getline(colladaReader, line);
+		std::stringstream().swap(ss);
+		ss.str(line);
+		std::vector<uint32_t> vertexWeightCount;
+		vertexWeightCount.resize(size);
+		
+		for (int i = 0; i < size; i++) {
+			int index;
+			ss >> index;
+			vertexWeightCount[i] = index;
+		}
+		
+		// Joints and Weights reader
+		std::getline(colladaReader, line);
+		std::getline(colladaReader, line);
+		std::stringstream().swap(ss);
+		ss.str(line);
+		tempJoints.resize(size);
+		tempWeights.resize(size);
+		
+		for (int i = 0; i < size; i++) {
+			
+			for (int j = 0; j < vertexWeightCount[i]; j++) {
+				float joint, weightID;
+				ss >> joint >> weightID;
+				if (j < 3) {
+					tempJoints[i][j] = joint;
+					tempWeights[i][j] = weights[weightID];
+				}
+			}
+		
+		}
+
+		// Indices Reader
 		colladaReader >> size;
 		std::getline(colladaReader, line);
 		std::getline(colladaReader, line);
@@ -204,8 +264,12 @@ bool Loader::loadDAE(const std::string& filePath, std::vector<AnimVertex>& verti
 			verticesAux[i].coords = tempVertPos[mat.x];
 			verticesAux[i].normals = tempVertNorm[mat.y];
 			verticesAux[i].uv = tempVertUV[mat.z];
+			verticesAux[i].joints = tempJoints[mat.x];
+			verticesAux[i].weights = tempWeights[mat.x];
 			indices[i] = i;
 		}
+
+		int a = 5;
 
 		for (uint32_t i = 0; i < verticesAux.size(); i += 3) {
 
