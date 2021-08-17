@@ -18,6 +18,7 @@ public:
 	void sendVec4(const std::string& uniform, const glm::vec4& value);
 	void sendInt1(const std::string& uniform, int value);
 	void sendMat4(const std::string& uniform, const glm::mat4& value);
+
 private:
 	uint32_t m_ID;
 	std::unordered_map<std::string, int> m_UniformLocationsCache;

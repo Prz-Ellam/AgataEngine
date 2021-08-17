@@ -1,6 +1,13 @@
 #include "Loader.h"
 #include "Log.h"
 #include <Windows.h>
+#undef min
+#undef max
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
+#define JOINT_MAX 3
 
 bool Loader::loadOBJ(const std::string& filePath, std::vector<Vertex3D>& vertices, std::vector<unsigned int>& indices) {
 
@@ -135,6 +142,86 @@ bool Loader::loadOBJ(const std::string& filePath, std::vector<Vertex3D>& vertice
 
 }
 
+bool Loader::loadCollada(const std::string& filePath, std::vector<AnimVertex>& vertices, std::vector<uint32_t>& indices) {
+
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
+
+	if (!scene) 
+		return false;
+
+	aiMesh* mesh = scene->mMeshes[0];
+
+	std::vector<AnimVertex> verticesAux;
+	verticesAux.resize(mesh->mNumVertices);
+	indices.resize(mesh->mNumVertices); // <- Clean up first
+
+	for (int i = 0; i < mesh->mNumVertices; i++) {
+
+		glm::vec3 v;
+		v.x = mesh->mVertices[i].x;
+		v.y = mesh->mVertices[i].y;
+		v.z = mesh->mVertices[i].z;
+		verticesAux[i].coords = v;;
+
+		glm::vec2 uv;
+		uv.x = mesh->mTextureCoords[0][i].x;
+		uv.y = mesh->mTextureCoords[0][i].y;
+		verticesAux[i].uv = uv;
+
+		glm::vec3 norm;
+		norm.x = mesh->mNormals[i].x;
+		norm.y = mesh->mNormals[i].y;
+		norm.z = mesh->mNormals[i].z;
+		verticesAux[i].normals = norm;
+
+		glm::vec3 tan;
+		tan.x = mesh->mTangents[i].x;
+		tan.y = mesh->mTangents[i].y;
+		tan.z = mesh->mTangents[i].z;
+		verticesAux[i].tangents = tan;
+
+		glm::vec3 bi;
+		bi.x = mesh->mBitangents[i].x;
+		bi.y = mesh->mBitangents[i].y;
+		bi.z = mesh->mBitangents[i].z;
+		verticesAux[i].bitangents = bi;
+		
+		indices[i] = i;
+
+	}
+
+	uint32_t globalJoints = 0;
+	/* 
+		jointPos acumula el offset en el que va los arreglos de joints y weights en cada uno de los vertices, todos inician en 0
+	    y cuando se les introduce un joint aumentan uno, el maximo de joints son 3, en caso de haber mas de 3 seran ignorados
+	*/
+	std::vector<uint8_t> jointPos;
+	jointPos.resize(verticesAux.size());
+	for (int i = 0; i < mesh->mNumBones; i++) {
+
+		uint32_t jointID = globalJoints;
+		globalJoints++;
+
+		for (int j = 0; j < mesh->mBones[i]->mNumWeights; j++) {
+
+			uint32_t vertexID = mesh->mBones[i]->mWeights[j].mVertexId; 
+			float weight = mesh->mBones[i]->mWeights[j].mWeight;
+
+			if (jointPos[vertexID] < JOINT_MAX) {
+				verticesAux[vertexID].joints[jointPos[vertexID]] = jointID;
+				verticesAux[vertexID].weights[jointPos[vertexID]] = weight;
+				jointPos[vertexID]++;
+			}
+
+		}
+	}
+
+	vertices = verticesAux;
+	return true;
+
+}
+
 bool Loader::loadDAE(const std::string& filePath, std::vector<AnimVertex>& vertices, std::vector<unsigned int>& indices) {
 
 	std::ifstream colladaReader(filePath);
@@ -166,9 +253,6 @@ bool Loader::loadDAE(const std::string& filePath, std::vector<AnimVertex>& verti
 		for (int i = 0; i < size; i++) {
 			glm::vec3 v;
 			ss >> v.x >> v.y >> v.z;
-			v.x /= 39.3701;
-			v.y /= 39.3701;
-			v.z /= 39.3701;
 			tempVertPos.push_back(v);
 		}
 

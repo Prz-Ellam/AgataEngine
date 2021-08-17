@@ -61,8 +61,8 @@ void Scene3D::init() {
 			ModelPath("Assets\\lantern.obj"s).
 			Position(glm::vec3(6.10f, 1.4f, 11.12f)).
 			Rotation(glm::vec3(-90.0f, 0.0f, 0.0f)).
-			Scale(glm::vec3(10.0f)).
-			DiffuseTexture("Assets\\diffuse.jpg"s).
+			Scale(glm::vec3(0.2f)).
+			DiffuseTexture("Assets\\Character Texture.png"s).
 			//SpecularTexture("Assets\\barrelSpecular.png"s).
 			NormalTexture("Assets\\normal.png"s).
 			AmbientMaterial(glm::vec3(0.75f)).
@@ -231,6 +231,8 @@ void Scene3D::run() {
 		m_Renderer.clear(0.1f, 0.1f, 0.1f, 1.0f);
 		skybox->draw(shaderSkybox, *light);
 		terrain->draw(shaderTerrain, *light);
+		shaderModel->bind();
+		shaderModel->sendMat4("u_Matriz", joint);
 		model->draw(shaderModel, *light);
 		billboard->draw(shaderBill, *light);
 
@@ -281,17 +283,29 @@ void Scene3D::imGuiEvent(bool a) {
 
 	ImGui::Begin("Info");
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	ImGui::SliderFloat3("Light Position:", &light->getPosition()[0], -100, 100);
-	ImGui::SliderFloat3("Light Colour:", &light->getColour()[0], 0, 1);
-	ImGui::SliderFloat3("Player Position:", &m_Camera->getPosition()[0], 0, 20);
-	ImGui::SliderFloat3("Player Forward:", &m_Camera->getForward()[0], -100, 100);
-	ImGui::SliderFloat3("Player Right:", &m_Camera->getRight()[0], -100, 100);
-	ImGui::SliderFloat("Player Pitch:", &m_Camera->getPitch(), -100, 100);
-	ImGui::SliderFloat("Player Yaw:", &m_Camera->getYaw(), -100, 100);
-	ImGui::SliderFloat3("Water Position:", &water->getPositionRef()[0], -20, 20);
-	ImGui::SliderFloat3("Water Scale:", &water->getScaleRef()[0], -20, 20);
-	ImGui::SliderFloat("Tiling Factor:", &terrain->getTilingFactorRef(), 0.0f, 100.0f);
-	ImGui::SliderFloat("Fall Velocity: ", &m_Camera->getUpVelocityRef(), 0.0f, 0.0f);
+	//ImGui::SliderFloat3("Light Position:", &light->getPosition()[0], -100, 100);
+	//ImGui::SliderFloat3("Light Colour:", &light->getColour()[0], 0, 1);
+	//ImGui::SliderFloat3("Player Position:", &m_Camera->getPosition()[0], 0, 20);
+	//ImGui::SliderFloat3("Player Forward:", &m_Camera->getForward()[0], -100, 100);
+	//ImGui::SliderFloat3("Player Right:", &m_Camera->getRight()[0], -100, 100);
+	//ImGui::SliderFloat("Player Pitch:", &m_Camera->getPitch(), -100, 100);
+	//ImGui::SliderFloat("Player Yaw:", &m_Camera->getYaw(), -100, 100);
+	//ImGui::SliderFloat3("Water Position:", &water->getPositionRef()[0], -20, 20);
+	//ImGui::SliderFloat3("Water Scale:", &water->getScaleRef()[0], -20, 20);
+	//ImGui::SliderFloat("Tiling Factor:", &terrain->getTilingFactorRef(), 0.0f, 100.0f);
+	//ImGui::SliderFloat("Fall Velocity: ", &m_Camera->getUpVelocityRef(), 0.0f, 0.0f);
+	ImGui::PushID(0);
+	ImGui::SliderFloat4("Matriz: ", glm::value_ptr(joint), -1.0f, 1.0f);
+	ImGui::PopID();
+	ImGui::PushID(1);
+	ImGui::SliderFloat4("Matriz: ", glm::value_ptr(joint) + 4, -1.0f, 1.0f);
+	ImGui::PopID();
+	ImGui::PushID(2);
+	ImGui::SliderFloat4("Matriz: ", glm::value_ptr(joint) + 8, -1.0f, 1.0f);
+	ImGui::PopID();
+	ImGui::PushID(3);
+	ImGui::SliderFloat4("Matriz: ", glm::value_ptr(joint) + 12, -1.0f, 1.0f);
+	ImGui::PopID();
 	ImGui::End();
 
 }

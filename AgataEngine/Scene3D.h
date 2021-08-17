@@ -48,6 +48,7 @@ private:
 	Water* water;
 	Light* light;
 	float lightAngle;
+	glm::mat4 joint = glm::mat4(1.0f);
 };
 
 

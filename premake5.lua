@@ -30,15 +30,18 @@ project "Agata"
 		"$(SolutionDir)AgataEngine/Scene",
 		"$(SolutionDir)AgataEngine/Window",
 		"$(SolutionDir)AgataEngine",
+		"$(SolutionDir)Vendor/Assimp/$(Platform)/include"
 	}
 
 	libdirs {
 		"$(SolutionDir)Vendor/GLFW/$(Platform)/lib-vc2019",
 		"$(SolutionDir)Vendor/GLEW/$(Platform)/lib"
+		"$(SolutionDir)Vendor/Assimp/$(Platform)/lib"
 	}
 
 	links {
 		"ImGui",
+		"assimp-vc140-mt.lib",
 		"glfw3.lib",
 		"glew32s.lib",
 		"opengl32.lib",

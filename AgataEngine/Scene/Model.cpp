@@ -29,7 +29,7 @@ Model::Model(const std::string& filePath, const std::string& diffuseTex, const s
 	std::vector<AnimVertex> vertices;
 	std::vector<uint32_t> indices;
 
-	Loader::loadDAE("Assets//character.txt", vertices, indices);
+	Loader::loadCollada("Assets//model.dae", vertices, indices);
 	//Loader::loadOBJ(filePath, vertices, indices);
 
 	m_Mesh = new Mesh(vertices, indices);
