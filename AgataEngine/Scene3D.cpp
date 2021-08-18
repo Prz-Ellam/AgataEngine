@@ -57,14 +57,28 @@ void Scene3D::init() {
 
 	{
 		Onfer::Timer modelBuilder("ModelBuilder");
-		model = ModelBuilder().
-			ModelPath("Assets\\lantern.obj"s).
+		//model = ModelBuilder().
+		//	ModelPath("Assets\\lantern.obj"s).
+		//	Position(glm::vec3(6.10f, 1.4f, 11.12f)).
+		//	Rotation(glm::vec3(-90.0f, 0.0f, 0.0f)).
+		//	Scale(glm::vec3(0.1f)).
+		//	DiffuseTexture("Assets\\Character Texture.png"s).
+		//	//SpecularTexture("Assets\\barrelSpecular.png"s).
+		//	//NormalTexture("Assets\\normal.png"s).
+		//	AmbientMaterial(glm::vec3(0.75f)).
+		//	DiffuseMaterial(glm::vec3(0.85f)).
+		//	SpecularMaterial(glm::vec3(1.0f)).
+		//	ShininessMaterial(32).
+		//	BuildHeap();
+
+		animatedModel = AnimatedModelBuilder().
+			ModelPath("Assets\\model.dae"s).
 			Position(glm::vec3(6.10f, 1.4f, 11.12f)).
 			Rotation(glm::vec3(-90.0f, 0.0f, 0.0f)).
-			Scale(glm::vec3(0.2f)).
+			Scale(glm::vec3(0.1f)).
 			DiffuseTexture("Assets\\Character Texture.png"s).
 			//SpecularTexture("Assets\\barrelSpecular.png"s).
-			NormalTexture("Assets\\normal.png"s).
+			//NormalTexture("Assets\\normal.png"s).
 			AmbientMaterial(glm::vec3(0.75f)).
 			DiffuseMaterial(glm::vec3(0.85f)).
 			SpecularMaterial(glm::vec3(1.0f)).
@@ -120,7 +134,8 @@ void Scene3D::shutdown() {
 
 	delete imGui;
 	delete m_Window;
-	delete model;
+	//delete model;
+	delete animatedModel;
 	delete terrain;
 	delete skybox;
 	delete billboard;
@@ -164,15 +179,15 @@ void Scene3D::run() {
 		float intensity = glm::clamp(glm::sin(glm::radians(lightAngle)), 0.2f, 0.8f);
 
 		if (lightAngle >= 0) {
-			model->getMaterialRef().setDiffuse(glm::vec3(intensity + 0.2f));
+			animatedModel->getMaterialRef().setDiffuse(glm::vec3(intensity + 0.2f));
 			terrain->setDiffuse(glm::vec3(intensity + 0.2f));
 		}
 		else {
-			model->getMaterialRef().setDiffuse(glm::vec3(0.0f));
+			animatedModel->getMaterialRef().setDiffuse(glm::vec3(0.0f));
 			terrain->setDiffuse(glm::vec3(0.0f));
 		}
 
-		model->getMaterialRef().setAmbient(glm::vec3(intensity));
+		animatedModel->getMaterialRef().setAmbient(glm::vec3(intensity));
 		terrain->setAmbient(glm::vec3(glm::clamp(intensity, 0.2f, 0.4f)));
 
 		//(i > -180.0f) ? i -= 0.1f : i = 180.0f;
@@ -195,6 +210,8 @@ void Scene3D::run() {
 		imGui->newFrame();
 		imGui->draw();
 
+		float ts = GetTickCount() / 1000.0f;
+
 		m_InvertCamera->move(m_Window->getHandler(), *terrain, dt);
 		m_Camera->move(m_Window->getHandler(), *terrain, dt);
 
@@ -205,7 +222,7 @@ void Scene3D::run() {
 		m_Renderer.beginScene(m_InvertCamera);
 		water->startReflection();
 		m_Renderer.clear(0.1f, 0.1f, 0.1f, 1.0f);
-		model->draw(shaderModel, *light, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+		animatedModel->draw(shaderModel, *light, ts, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 		terrain->draw(shaderTerrain, *light, glm::vec4(0.0f, 1.0f, 0.0f, -water->getHeight()));
 		skybox->draw(shaderSkybox, *light);
 		billboard->draw(shaderBill, *light);
@@ -217,7 +234,7 @@ void Scene3D::run() {
 		m_Renderer.beginScene(m_Camera);
 		water->startRefraction();
 		m_Renderer.clear(0.1f, 0.1f, 0.1f, 1.0f);
-		model->draw(shaderModel, *light, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+		animatedModel->draw(shaderModel, *light, ts, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 		terrain->draw(shaderTerrain, *light, glm::vec4(0.0f, -1.0f, 0.0f, water->getHeight()));
 		skybox->draw(shaderSkybox, *light);
 		billboard->draw(shaderBill, *light);
@@ -233,7 +250,7 @@ void Scene3D::run() {
 		terrain->draw(shaderTerrain, *light);
 		shaderModel->bind();
 		shaderModel->sendMat4("u_Matriz", joint);
-		model->draw(shaderModel, *light);
+		animatedModel->draw(shaderModel, *light, ts);
 		billboard->draw(shaderBill, *light);
 
 		water->draw(shaderWater, *light);

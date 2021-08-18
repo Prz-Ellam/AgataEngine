@@ -1,11 +1,14 @@
 #include "Loader.h"
 #include "Log.h"
 #include <Windows.h>
+#include "Timer.h"
+#include "Animation.h"
+#include "KeyFrames.h"
+#include "Animation.h"
+#include <utility>
 #undef min
-#undef max
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+#undef max // <- Windows.h tiene definido esto
+
 
 #define JOINT_MAX 3
 
@@ -142,7 +145,8 @@ bool Loader::loadOBJ(const std::string& filePath, std::vector<Vertex3D>& vertice
 
 }
 
-bool Loader::loadCollada(const std::string& filePath, std::vector<AnimVertex>& vertices, std::vector<uint32_t>& indices) {
+bool Loader::loadCollada(const std::string& filePath, std::vector<AnimVertex>& vertices, std::vector<uint32_t>& indices, 
+	Joint& joints, std::vector<Animation>& animations, glm::mat4& globalInverse) {
 
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
@@ -152,56 +156,69 @@ bool Loader::loadCollada(const std::string& filePath, std::vector<AnimVertex>& v
 
 	aiMesh* mesh = scene->mMeshes[0];
 
+	globalInverse = glm::transpose(*reinterpret_cast<glm::mat4*>(&scene->mRootNode->mTransformation.Inverse()));
+
 	std::vector<AnimVertex> verticesAux;
-	verticesAux.resize(mesh->mNumVertices);
-	indices.resize(mesh->mNumVertices); // <- Clean up first
+	for (int i = 0; i < scene->mNumMeshes; i++) {
 
-	for (int i = 0; i < mesh->mNumVertices; i++) {
+		verticesAux.resize(mesh->mNumVertices);
+		indices.resize(mesh->mNumVertices); // <- Clean up first
 
-		glm::vec3 v;
-		v.x = mesh->mVertices[i].x;
-		v.y = mesh->mVertices[i].y;
-		v.z = mesh->mVertices[i].z;
-		verticesAux[i].coords = v;;
+		for (int i = 0; i < mesh->mNumVertices; i++) {
 
-		glm::vec2 uv;
-		uv.x = mesh->mTextureCoords[0][i].x;
-		uv.y = mesh->mTextureCoords[0][i].y;
-		verticesAux[i].uv = uv;
+			glm::vec3 v;
+			v.x = mesh->mVertices[i].x;
+			v.y = mesh->mVertices[i].y;
+			v.z = mesh->mVertices[i].z;
+			verticesAux[i].coords = v;;
 
-		glm::vec3 norm;
-		norm.x = mesh->mNormals[i].x;
-		norm.y = mesh->mNormals[i].y;
-		norm.z = mesh->mNormals[i].z;
-		verticesAux[i].normals = norm;
+			glm::vec2 uv;
+			uv.x = mesh->mTextureCoords[0][i].x;
+			uv.y = mesh->mTextureCoords[0][i].y;
+			verticesAux[i].uv = uv;
 
-		glm::vec3 tan;
-		tan.x = mesh->mTangents[i].x;
-		tan.y = mesh->mTangents[i].y;
-		tan.z = mesh->mTangents[i].z;
-		verticesAux[i].tangents = tan;
+			glm::vec3 norm;
+			norm.x = mesh->mNormals[i].x;
+			norm.y = mesh->mNormals[i].y;
+			norm.z = mesh->mNormals[i].z;
+			verticesAux[i].normals = norm;
 
-		glm::vec3 bi;
-		bi.x = mesh->mBitangents[i].x;
-		bi.y = mesh->mBitangents[i].y;
-		bi.z = mesh->mBitangents[i].z;
-		verticesAux[i].bitangents = bi;
-		
-		indices[i] = i;
+			glm::vec3 tan;
+			tan.x = mesh->mTangents[i].x;
+			tan.y = mesh->mTangents[i].y;
+			tan.z = mesh->mTangents[i].z;
+			verticesAux[i].tangents = tan;
+			
+			glm::vec3 bi;
+			bi.x = mesh->mBitangents[i].x;
+			bi.y = mesh->mBitangents[i].y;
+			bi.z = mesh->mBitangents[i].z;
+			verticesAux[i].bitangents = bi;
 
+			indices[i] = i;
+
+		}
 	}
 
-	uint32_t globalJoints = 0;
+	uint32_t jointID = 0;
 	/* 
 		jointPos acumula el offset en el que va los arreglos de joints y weights en cada uno de los vertices, todos inician en 0
 	    y cuando se les introduce un joint aumentan uno, el maximo de joints son 3, en caso de haber mas de 3 seran ignorados
 	*/
 	std::vector<uint8_t> jointPos;
 	jointPos.resize(verticesAux.size());
+
+	std::unordered_map<uint32_t, std::pair<std::string, glm::mat4>> jointMap;
+	
+
 	for (int i = 0; i < mesh->mNumBones; i++) {
 
-		uint32_t jointID = globalJoints;
-		globalJoints++;
+		/*	
+			glm::mat4 y aiMatrix4x4 pesan 64 Bytes en memoria y ambas almacenan 16 float de 4 Bytes c/u asi que es seguro realizar
+			esta conversion 
+		*/
+		glm::mat4 localTransform = *reinterpret_cast<glm::mat4*>(&mesh->mBones[i]->mOffsetMatrix);
+		jointMap[jointID] = std::make_pair(mesh->mBones[i]->mName.C_Str(), localTransform);
 
 		for (int j = 0; j < mesh->mBones[i]->mNumWeights; j++) {
 
@@ -215,181 +232,38 @@ bool Loader::loadCollada(const std::string& filePath, std::vector<AnimVertex>& v
 			}
 
 		}
+
+		jointID++;
+
+	}
+
+	Joint jointsAux;
+	findJointHierarchy(jointsAux, jointMap, scene->mRootNode);
+
+	const aiAnimation* animator = scene->mAnimations[0];
+	std::vector<const aiNodeAnim*> anims;
+
+	for (int i = 0; i < animator->mNumChannels; i++) {
+		anims.push_back(animator->mChannels[i]);
+	}
+
+	std::vector<Animation> jointAnimations;
+	jointAnimations.resize(animator->mNumChannels);
+	
+	for (int i = 0; i < animator->mNumChannels; i++) {
+		jointAnimations[i].setLength(scene->mAnimations[0]->mDuration);
+		for (int j = 0; j < anims[0]->mNumPositionKeys; j++) {
+			glm::vec3 pos = *reinterpret_cast<glm::vec3*>(&anims[i]->mPositionKeys[j].mValue);
+			glm::quat rot = *reinterpret_cast<glm::quat*>(&anims[i]->mRotationKeys[j].mValue);
+			glm::vec3 sca = *reinterpret_cast<glm::vec3*>(&anims[i]->mScalingKeys[j].mValue);
+			KeyFrame keyframe = KeyFrame(anims[i]->mPositionKeys[j].mTime, pos, rot, sca);
+			jointAnimations[i].addKeyFrame(keyframe);
+		}
 	}
 
 	vertices = verticesAux;
-	return true;
-
-}
-
-bool Loader::loadDAE(const std::string& filePath, std::vector<AnimVertex>& vertices, std::vector<unsigned int>& indices) {
-
-	std::ifstream colladaReader(filePath);
-
-	if (!colladaReader.is_open()) {
-		return false;
-	}
-
-	std::vector<glm::vec3> tempVertPos;
-	std::vector<glm::vec2> tempVertUV;
-	std::vector<glm::vec3> tempVertNorm;
-	std::vector<glm::vec3> tempJoints;
-	std::vector<glm::vec3> tempWeights;
-
-	std::vector<AnimVertex> verticesAux;
-
-	while (!colladaReader.eof()) {
-
-		uint32_t size;
-		std::string line;
-		std::stringstream ss;
-
-		// Vertices reader
-		colladaReader >> size;
-		std::getline(colladaReader, line);
-		std::getline(colladaReader, line);
-		ss.str(line);
-
-		for (int i = 0; i < size; i++) {
-			glm::vec3 v;
-			ss >> v.x >> v.y >> v.z;
-			tempVertPos.push_back(v);
-		}
-
-		// Normals reader
-		colladaReader >> size;
-		std::getline(colladaReader, line);
-		std::getline(colladaReader, line);
-		std::stringstream().swap(ss);
-		ss.str(line);
-
-		for (int i = 0; i < size; i++) {
-			glm::vec3 vn;
-			ss >> vn.x >> vn.y >> vn.z;
-			tempVertNorm.push_back(vn);
-		}
-
-		// UV reader
-		colladaReader >> size;
-		std::getline(colladaReader, line);
-		std::getline(colladaReader, line);
-		std::stringstream().swap(ss);
-		ss.str(line);
-
-		for (int i = 0; i < size; i++) {
-			glm::vec2 vt;
-			ss >> vt.x >> vt.y;
-			tempVertUV.push_back(vt);
-		}
-
-		// Weight reader
-		colladaReader >> size;
-		std::getline(colladaReader, line);
-		std::getline(colladaReader, line);
-		std::stringstream().swap(ss);
-		ss.str(line);
-		std::vector<float> weights;
-		weights.resize(size);
-		
-		for (int i = 0; i < size; i++) {
-			float weight;
-			ss >> weight;
-			weights[i] = weight;
-		}
-		
-		// Vertex Weight Count
-		colladaReader >> size;
-		std::getline(colladaReader, line);
-		std::getline(colladaReader, line);
-		std::stringstream().swap(ss);
-		ss.str(line);
-		std::vector<uint32_t> vertexWeightCount;
-		vertexWeightCount.resize(size);
-		
-		for (int i = 0; i < size; i++) {
-			int index;
-			ss >> index;
-			vertexWeightCount[i] = index;
-		}
-		
-		// Joints and Weights reader
-		std::getline(colladaReader, line);
-		std::getline(colladaReader, line);
-		std::stringstream().swap(ss);
-		ss.str(line);
-		tempJoints.resize(size);
-		tempWeights.resize(size);
-		
-		for (int i = 0; i < size; i++) {
-			
-			for (int j = 0; j < vertexWeightCount[i]; j++) {
-				float joint, weightID;
-				ss >> joint >> weightID;
-				if (j < 3) {
-					tempJoints[i][j] = joint;
-					tempWeights[i][j] = weights[weightID];
-				}
-			}
-		
-		}
-
-		// Indices Reader
-		colladaReader >> size;
-		std::getline(colladaReader, line);
-		std::getline(colladaReader, line);
-		std::stringstream().swap(ss);
-		ss.str(line);
-		verticesAux.resize(size * 3);
-		indices.resize(size * 3);
-
-		for (int i = 0; i < size * 3; i++) {
-			glm::vec4 mat;
-			ss >> mat.x >> mat.y >> mat.z >> mat.w;
-			verticesAux[i].coords = tempVertPos[mat.x];
-			verticesAux[i].normals = tempVertNorm[mat.y];
-			verticesAux[i].uv = tempVertUV[mat.z];
-			verticesAux[i].joints = tempJoints[mat.x];
-			verticesAux[i].weights = tempWeights[mat.x];
-			indices[i] = i;
-		}
-
-		int a = 5;
-
-		for (uint32_t i = 0; i < verticesAux.size(); i += 3) {
-
-			glm::vec3& v0 = verticesAux[i + 0].coords;
-			glm::vec3& v1 = verticesAux[i + 1].coords;
-			glm::vec3& v2 = verticesAux[i + 2].coords;
-
-			glm::vec2& uv0 = verticesAux[i + 0].uv;
-			glm::vec2& uv1 = verticesAux[i + 1].uv;
-			glm::vec2& uv2 = verticesAux[i + 2].uv;
-
-			glm::vec3 deltaPos1 = v1 - v0;
-			glm::vec3 deltaPos2 = v2 - v0;
-
-			glm::vec2 deltaUV1 = uv1 - uv0;
-			glm::vec2 deltaUV2 = uv2 - uv0;
-
-			float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
-
-			glm::vec3 tangent = r * (deltaUV2.y * deltaPos1 - deltaUV1.y * deltaPos2);
-			glm::vec3 bitangent = r * (deltaUV1.x * deltaPos2 - deltaUV2.x * deltaPos1);
-
-			verticesAux[i + 0].tangents = tangent;
-			verticesAux[i + 1].tangents = tangent;
-			verticesAux[i + 2].tangents = tangent;
-
-			verticesAux[i + 0].bitangents = bitangent;
-			verticesAux[i + 1].bitangents = bitangent;
-			verticesAux[i + 2].bitangents = bitangent;
-
-		}
-
-	}
-
-	vertices = verticesAux;
-	colladaReader.close();
+	joints = jointsAux;
+	animations = jointAnimations;
 	return true;
 
 }
@@ -577,5 +451,28 @@ std::tuple<std::vector<Vertex3D>, std::vector<uint32_t>> Loader::loadHorizontalQ
 	indicesAux[5] = 0;
 
 	return { verticesAux, indicesAux };
+
+}
+
+
+void Loader::findJointHierarchy(Joint& joint, std::unordered_map<uint32_t, std::pair<std::string, glm::mat4>> jointMap,
+	aiNode* node) {
+
+	auto it = std::find_if(std::begin(jointMap), std::end(jointMap), [&node](auto&& p) { return p.second.first == node->mName.C_Str(); });
+
+	if (it != jointMap.end()) {
+		glm::mat4 transformationMatrix = *reinterpret_cast<glm::mat4*>(&node->mTransformation);
+		joint.setAttributes(it->first, it->second.first, it->second.second, transformationMatrix);
+		joint.addChildren(node->mNumChildren);
+		
+		for (int i = 0; i < node->mNumChildren; i++) {
+			findJointHierarchy(joint.getChildren(i), jointMap, node->mChildren[i]);
+		}
+	}
+	else {
+		for (int i = 0; i < node->mNumChildren; i++) {
+			findJointHierarchy(joint, jointMap, node->mChildren[i]);
+		}
+	}
 
 }

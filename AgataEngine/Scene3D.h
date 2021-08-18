@@ -7,6 +7,7 @@
 #include "Skybox.h"
 #include "Shader.h"
 #include "Billboard.h"
+#include "AnimatedModel.h"
 #include "Camera.h"
 #include "Water.h"
 #include "Light.h"
@@ -32,6 +33,7 @@ public:
 private:
 	ImGuiLayer* imGui;
 	Model* model;
+	AnimatedModel* animatedModel;
 	Terrain* terrain;
 	Skybox* skybox;
 	Billboard* billboard;

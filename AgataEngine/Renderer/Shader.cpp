@@ -126,3 +126,9 @@ void Shader::sendMat4(const std::string& uniform, const glm::mat4& value) {
 	glUniformMatrix4fv(getUniformLocation(uniform), 1, GL_FALSE, glm::value_ptr(value));
 
 }
+
+void Shader::sendMat4Array(const std::string& uniform, const std::vector<glm::mat4>& value) {
+
+	glUniformMatrix4fv(getUniformLocation(uniform), value.size(), GL_FALSE, glm::value_ptr(value[0]));
+
+}

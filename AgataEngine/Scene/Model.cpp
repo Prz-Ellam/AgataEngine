@@ -1,6 +1,8 @@
 #include "Model.h"
 #include "Loader.h"
 #include "Renderer.h"
+#include "Joint.h"
+#include "Timer.h"
 
 //Model::Model(const std::string& filePath) : m_Position(0.0f, 0.0f, 0.0f), m_Rotation(0.0f, 0.0f, 0.0f), m_Scale(1.0f, 1.0f, 1.0f) {
 //
@@ -26,11 +28,10 @@ Model::Model(const std::string& filePath, const std::string& diffuseTex, const s
 	: m_Position(position), m_Rotation(rotation), m_Scale(scale),
 	m_Material(diffuseTex, specularTex, normalTex, ambientMaterial, diffuseMaterial, specularMaterial, shininessMaterial) {
 
-	std::vector<AnimVertex> vertices;
+	std::vector<Vertex3D> vertices;
 	std::vector<uint32_t> indices;
 
-	Loader::loadCollada("Assets//model.dae", vertices, indices);
-	//Loader::loadOBJ(filePath, vertices, indices);
+	Loader::loadOBJ(filePath, vertices, indices);
 
 	m_Mesh = new Mesh(vertices, indices);
 
