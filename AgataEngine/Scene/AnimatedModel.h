@@ -41,9 +41,9 @@ private:
 	std::vector<Animation> animations;
 	std::vector<int> locations;
 
-	glm::vec3 lerpPosition(float animationTime);
-	glm::quat lerpRotation(float animationTime);
-	glm::vec3 lerpScale(float animationTime);
+	glm::vec3 lerpPosition(float animationTime, uint32_t jointID);
+	glm::quat lerpRotation(float animationTime, uint32_t jointID);
+	glm::vec3 lerpScale(float animationTime, uint32_t jointID);
 
 	glm::vec4 m_Colour;
 	glm::vec3 m_Position;

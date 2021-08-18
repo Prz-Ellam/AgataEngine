@@ -72,10 +72,10 @@ void Scene3D::init() {
 		//	BuildHeap();
 
 		animatedModel = AnimatedModelBuilder().
-			ModelPath("Assets\\model.dae"s).
+			ModelPath("Assets\\wolf.dae"s).
 			Position(glm::vec3(6.10f, 1.4f, 11.12f)).
 			Rotation(glm::vec3(-90.0f, 0.0f, 0.0f)).
-			Scale(glm::vec3(0.1f)).
+			Scale(glm::vec3(1.0f)).
 			DiffuseTexture("Assets\\Character Texture.png"s).
 			//SpecularTexture("Assets\\barrelSpecular.png"s).
 			//NormalTexture("Assets\\normal.png"s).

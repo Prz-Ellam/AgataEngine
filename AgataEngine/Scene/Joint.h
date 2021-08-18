@@ -21,6 +21,7 @@ public:
 	}
 
 	uint32_t getID() const { return m_ID; }
+	std::string getName() const { return m_Name; }
 
 
 	glm::mat4 getOffsetMatrix() const { return m_OffsetMatrix; }

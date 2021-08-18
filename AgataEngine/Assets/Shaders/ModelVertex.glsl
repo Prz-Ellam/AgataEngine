@@ -30,8 +30,8 @@ void main() {
 	fs_JointID = a_JointID;
 	mat4 matrices[16];
 	
-	matrices[0] = u_Joints[0];
-	matrices[1] =  mat4(0.999776, -0.00582242, 0.0203655, -0.0960783, 0.00729184, 0.997317, -0.0728394, 0.341381, -0.0198867, 0.0729714, 0.997136, 0.102029, 0, 0, 0, 1); 
+	matrices[0] =  transpose(u_Joints[0]);
+	matrices[1] =  transpose(u_Joints[1]); 
 	matrices[2] =  mat4(0.999776, -0.00582242, 0.0203655, -0.0960783, 0.00729185, 0.997317, -0.0728393, 0.34138, -0.0198867, 0.0729715, 0.997135, 0.10203, 0, 0, 0, 1);
 	matrices[3] =  mat4(0.999776, -0.00582243, 0.0203655, -0.0960783, 0.00729185, 0.997317, -0.0728393, 0.34138, -0.0198867, 0.0729715, 0.997135, 0.102031, 0, 0, 0, 1); 
 	matrices[4] =  mat4(0.769379, 0.631079, 0.0989721, -0.390748, -0.490338, 0.682747, -0.541688, 3.39434, -0.409421, 0.368233, 0.834733, 1.30982, 0, 0, 0, 1);
@@ -47,9 +47,9 @@ void main() {
 	matrices[14] = mat4(0.929486, 0.285367, 0.233714, -0.494204, 0.112822, 0.3833, -0.916706, 1.49828, -0.351179, 0.878438, 0.324073, 1.26283, 0, 0, 0, 1);
 	matrices[15] = mat4(0.929165, 0.337948, 0.149815, -0.4655, 0.176934, -0.0507331, -0.982912, 1.64015, -0.324572, 0.9398, -0.106936, 1.46263, 0, 0, 0, 1); 
 	
-	mat4 bone_transform = transpose(matrices[int(a_JointID[0])]) * a_Weights[0];
-		 bone_transform += transpose(matrices[int(a_JointID[1])]) * a_Weights[1];
-		 bone_transform += transpose(matrices[int(a_JointID[2])]) * a_Weights[2];
+	mat4 bone_transform = u_Joints[int(a_JointID[0])] * a_Weights[0];
+		 bone_transform += u_Joints[int(a_JointID[1])] * a_Weights[1];
+		 bone_transform += u_Joints[int(a_JointID[2])] * a_Weights[2];
 			
 	vec4 posePosition = bone_transform * vec4(a_Pos, 1.0); // transformed by bones
 

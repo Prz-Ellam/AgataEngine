@@ -99,39 +99,41 @@ void AnimatedModel::loadJointsTransforms(float timeStamp, std::vector<glm::mat4>
 void AnimatedModel::findTransformations(float animationTime, Joint& m_RootJoint, const glm::mat4& parent, 
 	std::vector<glm::mat4>& transformations) {
 
+	if (m_RootJoint.getName() == "")
+		return;
+
 	glm::mat4 transformationMatrix = m_RootJoint.getTransformationMatrix();
 	//auto* a = glm::value_ptr(transformationMatrix);
 
-	glm::vec3 lerpPos = lerpPosition(animationTime);
-	glm::quat lerpRot = lerpRotation(animationTime);
-	glm::vec3 lerpSca = lerpScale(animationTime);
+	glm::vec3 lerpPos = lerpPosition(animationTime, m_RootJoint.getID());
+	glm::quat lerpRot = lerpRotation(animationTime, m_RootJoint.getID());
+	glm::vec3 lerpSca = lerpScale(animationTime, m_RootJoint.getID());
 
 	glm::mat4 out = glm::translate(glm::mat4(1.0f), lerpPos);
 	out = out * glm::mat4_cast(lerpRot);
 	out = glm::scale(out, lerpSca);
-	out = glm::transpose(out);
 
 	//auto* a = glm::value_ptr(out);
 
-	glm::mat4 globalTransform = glm::transpose(glm::transpose(parent) * glm::transpose(out));
+	glm::mat4 globalTransform = parent * out;
 	
-	transformations[m_RootJoint.getID()] = glm::transpose(m_GlobalInverseTransformation * glm::transpose(globalTransform) *
-		glm::transpose(m_RootJoint.getOffsetMatrix()));
+	transformations[m_RootJoint.getID()] = glm::transpose(m_GlobalInverseTransformation) * globalTransform *
+		m_RootJoint.getOffsetMatrix();
 	auto* a = glm::value_ptr(transformations[m_RootJoint.getID()]);
 
 	for (int i = 0; i < m_RootJoint.getChildrenCount(); i++) {
 
-		findTransformations(animationTime, m_RootJoint.getChildren(i), out, transformations);
+		findTransformations(animationTime, m_RootJoint.getChildren(i), globalTransform, transformations);
 
 	}
 
 }
 
-glm::vec3 AnimatedModel::lerpPosition(float animationTime) {
+glm::vec3 AnimatedModel::lerpPosition(float animationTime, uint32_t jointID) {
 
 	int positionIndex = 0, nextPosition;
 
-	std::vector<KeyFrame> keyframes = animations[m_RootJoint.getID()].getKeyFrames();
+	std::vector<KeyFrame> keyframes = animations[jointID].getKeyFrames();
 	for (int i = 0; i < keyframes.size() - 1; i++) {
 		if (animationTime < keyframes[i + 1].getTimeStamp()) {
 			positionIndex = i;
@@ -150,11 +152,11 @@ glm::vec3 AnimatedModel::lerpPosition(float animationTime) {
 
 }
 
-glm::quat AnimatedModel::lerpRotation(float animationTime) {
+glm::quat AnimatedModel::lerpRotation(float animationTime, uint32_t jointID) {
 
 	int positionIndex = 0, nextPosition;
 
-	std::vector<KeyFrame> keyframes = animations[m_RootJoint.getID()].getKeyFrames();
+	std::vector<KeyFrame> keyframes = animations[jointID].getKeyFrames();
 	for (int i = 0; i < keyframes.size() - 1; i++) {
 		if (animationTime < keyframes[i + 1].getTimeStamp()) {
 			positionIndex = i;
@@ -195,11 +197,11 @@ glm::quat AnimatedModel::lerpRotation(float animationTime) {
 
 }
 
-glm::vec3 AnimatedModel::lerpScale(float animationTime) {
+glm::vec3 AnimatedModel::lerpScale(float animationTime, uint32_t jointID) {
 
 	int positionIndex = 0, nextPosition;
 
-	std::vector<KeyFrame> keyframes = animations[m_RootJoint.getID()].getKeyFrames();
+	std::vector<KeyFrame> keyframes = animations[jointID].getKeyFrames();
 	for (int i = 0; i < keyframes.size() - 1; i++) {
 		if (animationTime < keyframes[i + 1].getTimeStamp()) {
 			positionIndex = i;

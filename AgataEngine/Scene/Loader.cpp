@@ -154,12 +154,12 @@ bool Loader::loadCollada(const std::string& filePath, std::vector<AnimVertex>& v
 	if (!scene) 
 		return false;
 
-	aiMesh* mesh = scene->mMeshes[0];
+	aiMesh* mesh = scene->mMeshes[1];
 
-	globalInverse = glm::transpose(*reinterpret_cast<glm::mat4*>(&scene->mRootNode->mTransformation.Inverse()));
+	globalInverse = *reinterpret_cast<glm::mat4*>(&scene->mRootNode->mTransformation.Inverse());
 
 	std::vector<AnimVertex> verticesAux;
-	for (int i = 0; i < scene->mNumMeshes; i++) {
+	//for (int i = 0; i < scene->mNumMeshes; i++) {
 
 		verticesAux.resize(mesh->mNumVertices);
 		indices.resize(mesh->mNumVertices); // <- Clean up first
@@ -198,7 +198,7 @@ bool Loader::loadCollada(const std::string& filePath, std::vector<AnimVertex>& v
 			indices[i] = i;
 
 		}
-	}
+	//}
 
 	uint32_t jointID = 0;
 	/* 
@@ -217,7 +217,7 @@ bool Loader::loadCollada(const std::string& filePath, std::vector<AnimVertex>& v
 			glm::mat4 y aiMatrix4x4 pesan 64 Bytes en memoria y ambas almacenan 16 float de 4 Bytes c/u asi que es seguro realizar
 			esta conversion 
 		*/
-		glm::mat4 localTransform = *reinterpret_cast<glm::mat4*>(&mesh->mBones[i]->mOffsetMatrix);
+		glm::mat4 localTransform = glm::transpose(*reinterpret_cast<glm::mat4*>(&mesh->mBones[i]->mOffsetMatrix));
 		jointMap[jointID] = std::make_pair(mesh->mBones[i]->mName.C_Str(), localTransform);
 
 		for (int j = 0; j < mesh->mBones[i]->mNumWeights; j++) {
@@ -461,7 +461,7 @@ void Loader::findJointHierarchy(Joint& joint, std::unordered_map<uint32_t, std::
 	auto it = std::find_if(std::begin(jointMap), std::end(jointMap), [&node](auto&& p) { return p.second.first == node->mName.C_Str(); });
 
 	if (it != jointMap.end()) {
-		glm::mat4 transformationMatrix = *reinterpret_cast<glm::mat4*>(&node->mTransformation);
+		glm::mat4 transformationMatrix = glm::transpose(*reinterpret_cast<glm::mat4*>(&node->mTransformation));
 		joint.setAttributes(it->first, it->second.first, it->second.second, transformationMatrix);
 		joint.addChildren(node->mNumChildren);
 		
