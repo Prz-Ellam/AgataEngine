@@ -24,6 +24,12 @@ public:
 		float shininessMaterial);
 	// Model(const ModelType& modelType);
 
+	Model(std::string&& filePath, std::string&& diffuseTex, std::string&& specularTex, std::string&& normalTex,
+		glm::vec3&& position, glm::vec3&& rotation, glm::vec3&& scale,
+		glm::vec3&& ambientMaterial, glm::vec3&& diffuseMaterial, glm::vec3&& specularMaterial,
+		float shininessMaterial);
+
+
 	~Model();
 	glm::mat4 getTransformation() const;
 	void setPosition(const glm::vec3& position);

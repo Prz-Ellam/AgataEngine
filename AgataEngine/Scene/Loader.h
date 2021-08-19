@@ -25,11 +25,14 @@ public:
 	~Loader() = delete;
 	static bool loadOBJ(const std::string& filePath, std::vector<Vertex3D>& vertices, std::vector<unsigned int>& indices);
 
+
 	static bool loadCollada(const std::string& filePath, std::vector<AnimVertex>& vertices, std::vector<uint32_t>& indices,
 	Joint& joints, std::vector<Animation>& animations, glm::mat4& globalInverse);
 
 	static void findJointHierarchy(Joint& joint, std::unordered_map<uint32_t, std::pair<std::string, glm::mat4>> jointMap, 
 		aiNode* node);
+
+	static glm::mat4 assimpToGlmMatrix(aiMatrix4x4 mat);
 
 	static bool loadCube(std::vector<Vertex3D>& vertices, std::vector<uint32_t>& indices);
 
