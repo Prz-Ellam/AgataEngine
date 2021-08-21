@@ -1,13 +1,12 @@
 #include "pch.h"
 
-#include <Windows.h>
-
 #include <GL/glew.h>
 #include <stb/stb_image.h>
 #include <stb/stb_image.cpp>
 #include "Shader.h"
 #include "Renderer.h"
 #include "Camera.h"
+#include <iostream>
 #include "Log.h"
 
 #include "Loader.h"
@@ -27,8 +26,6 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
-
-using namespace std::literals::string_literals;
 
 //int Nomain() {
 //

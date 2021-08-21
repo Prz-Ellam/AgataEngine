@@ -57,26 +57,12 @@ void Scene3D::init() {
 
 	{
 		Onfer::Timer modelBuilder("ModelBuilder");
-		model = ModelBuilder().
-			ModelPath("Assets\\Lantern.obj"s).
-			Position(glm::vec3(6.10f, 2.4f, 11.12f)).
-			Rotation(glm::vec3(0.0f, 0.0f, 0.0f)).
-			Scale(glm::vec3(30.0f)).
-			DiffuseTexture("Assets\\diffuse.jpg"s).
-			//SpecularTexture("Assets\\barrelSpecular.png"s).
-			//NormalTexture("Assets\\normal.png"s).
-			AmbientMaterial(glm::vec3(0.75f)).
-			DiffuseMaterial(glm::vec3(0.85f)).
-			SpecularMaterial(glm::vec3(1.0f)).
-			ShininessMaterial(32).
-			BuildHeap();
-
-		//animatedModel = AnimatedModelBuilder().
-		//	ModelPath("Assets\\dancing_vampire.dae"s).
-		//	Position(glm::vec3(6.10f, 1.4f, 11.12f)).
+		//model = ModelBuilder().
+		//	ModelPath("Assets\\Lantern.obj"s).
+		//	Position(glm::vec3(6.10f, 2.4f, 11.12f)).
 		//	Rotation(glm::vec3(0.0f, 0.0f, 0.0f)).
-		//	Scale(glm::vec3(0.01f)).
-		//	DiffuseTexture("Assets\\Character Texture.png"s).
+		//	Scale(glm::vec3(30.0f)).
+		//	DiffuseTexture("Assets\\diffuse.jpg"s).
 		//	//SpecularTexture("Assets\\barrelSpecular.png"s).
 		//	//NormalTexture("Assets\\normal.png"s).
 		//	AmbientMaterial(glm::vec3(0.75f)).
@@ -84,6 +70,20 @@ void Scene3D::init() {
 		//	SpecularMaterial(glm::vec3(1.0f)).
 		//	ShininessMaterial(32).
 		//	BuildHeap();
+
+		animatedModel = AnimatedModelBuilder().
+			ModelPath("Assets\\model.dae"s).
+			Position(glm::vec3(6.10f, 1.4f, 11.12f)).
+			Rotation(glm::vec3(-90.0f, 0.0f, 0.0f)).
+			Scale(glm::vec3(0.2f)).
+			DiffuseTexture("Assets\\Character Texture.png"s).
+			//SpecularTexture("Assets\\barrelSpecular.png"s).
+			//NormalTexture("Assets\\normal.png"s).
+			AmbientMaterial(glm::vec3(0.75f)).
+			DiffuseMaterial(glm::vec3(0.85f)).
+			SpecularMaterial(glm::vec3(1.0f)).
+			ShininessMaterial(32).
+			BuildHeap();
 	}
 
 	{
@@ -179,15 +179,15 @@ void Scene3D::run() {
 		float intensity = glm::clamp(glm::sin(glm::radians(lightAngle)), 0.2f, 0.8f);
 
 		if (lightAngle >= 0) {
-			model->getMaterialRef().setDiffuse(glm::vec3(intensity + 0.2f));
+			animatedModel->getMaterialRef().setDiffuse(glm::vec3(intensity + 0.2f));
 			terrain->setDiffuse(glm::vec3(intensity + 0.2f));
 		}
 		else {
-			model->getMaterialRef().setDiffuse(glm::vec3(0.0f));
+			animatedModel->getMaterialRef().setDiffuse(glm::vec3(0.0f));
 			terrain->setDiffuse(glm::vec3(0.0f));
 		}
 
-		model->getMaterialRef().setAmbient(glm::vec3(intensity));
+		animatedModel->getMaterialRef().setAmbient(glm::vec3(intensity));
 		terrain->setAmbient(glm::vec3(glm::clamp(intensity, 0.2f, 0.4f)));
 
 		//(i > -180.0f) ? i -= 0.1f : i = 180.0f;
@@ -222,7 +222,7 @@ void Scene3D::run() {
 		m_Renderer.beginScene(m_InvertCamera);
 		water->startReflection();
 		m_Renderer.clear(0.1f, 0.1f, 0.1f, 1.0f);
-		model->draw(shaderModel, *light, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+		animatedModel->draw(shaderModel, *light, ts, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 		terrain->draw(shaderTerrain, *light, glm::vec4(0.0f, 1.0f, 0.0f, -water->getHeight()));
 		skybox->draw(shaderSkybox, *light);
 		billboard->draw(shaderBill, *light);
@@ -234,7 +234,7 @@ void Scene3D::run() {
 		m_Renderer.beginScene(m_Camera);
 		water->startRefraction();
 		m_Renderer.clear(0.1f, 0.1f, 0.1f, 1.0f);
-		model->draw(shaderModel, *light, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+		animatedModel->draw(shaderModel, *light, ts, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 		terrain->draw(shaderTerrain, *light, glm::vec4(0.0f, -1.0f, 0.0f, water->getHeight()));
 		skybox->draw(shaderSkybox, *light);
 		billboard->draw(shaderBill, *light);
@@ -248,7 +248,7 @@ void Scene3D::run() {
 		m_Renderer.clear(0.1f, 0.1f, 0.1f, 1.0f);
 		skybox->draw(shaderSkybox, *light);
 		terrain->draw(shaderTerrain, *light);
-		model->draw(shaderModel, *light);
+		animatedModel->draw(shaderModel, *light, ts);
 		billboard->draw(shaderBill, *light);
 
 		water->draw(shaderWater, *light);

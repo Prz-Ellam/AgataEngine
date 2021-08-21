@@ -5,11 +5,13 @@
 #include "Animation.h"
 #include "KeyFrames.h"
 #include "Animation.h"
+#include "glmUtils.h"
 #include <utility>
 #undef min
 #undef max // <- Windows.h tiene definido esto
 
 
+Joint* findJoint(const std::string& name, Joint& joint);
 #define JOINT_MAX 3
 
 //bool Loader::loadOBJ(const std::string& filePath, std::vector<Vertex3D>& vertices, std::vector<unsigned int>& indices) {
@@ -277,7 +279,7 @@ bool Loader::loadCollada(const std::string& filePath, std::vector<AnimVertex>& v
 	 
 	std::vector<AnimVertex> verticesAux;
 	indices = {};
-	indices.resize(mesh->mNumVertices);
+	indices.reserve(mesh->mNumFaces * 3);
 	verticesAux.resize(mesh->mNumVertices);
 
 	// Load Mesh info
@@ -300,20 +302,24 @@ bool Loader::loadCollada(const std::string& filePath, std::vector<AnimVertex>& v
 		norm.z = mesh->mNormals[i].z;
 		verticesAux[i].normals = norm;
 
-		glm::vec3 tan;
-		tan.x = mesh->mTangents[i].x;
-		tan.y = mesh->mTangents[i].y;
-		tan.z = mesh->mTangents[i].z;
-		verticesAux[i].tangents = tan;
-		
-		glm::vec3 bi;
-		bi.x = mesh->mBitangents[i].x;
-		bi.y = mesh->mBitangents[i].y;
-		bi.z = mesh->mBitangents[i].z;
-		verticesAux[i].bitangents = bi;
+		//glm::vec3 tan;
+		//tan.x = mesh->mTangents[i].x;
+		//tan.y = mesh->mTangents[i].y;
+		//tan.z = mesh->mTangents[i].z;
+		//verticesAux[i].tangents = tan;
+		//
+		//glm::vec3 bi;
+		//bi.x = mesh->mBitangents[i].x;
+		//bi.y = mesh->mBitangents[i].y;
+		//bi.z = mesh->mBitangents[i].z;
+		//verticesAux[i].bitangents = bi;
 
-		indices[i] = i;
+	}
 
+	for (int i = 0; i < mesh->mNumFaces; i++) {
+		indices.emplace_back(mesh->mFaces[i].mIndices[0]);
+		indices.emplace_back(mesh->mFaces[i].mIndices[1]);
+		indices.emplace_back(mesh->mFaces[i].mIndices[2]);
 	}
 
 	/* 
@@ -323,28 +329,31 @@ bool Loader::loadCollada(const std::string& filePath, std::vector<AnimVertex>& v
 	std::vector<uint8_t> jointPos;
 	jointPos.resize(verticesAux.size());
 
-	std::unordered_map<uint32_t, std::pair<std::string, glm::mat4>> jointInfo;
+	std::map<std::string, std::pair<uint32_t, glm::mat4>> jointInfo;
 	
-	for (int i = 0; i < mesh->mNumBones; i++) {
+	//for (int k = 0; k < scene->mNumMeshes; k++) {
 
-		glm::mat4 localTransform = assimpToGlmMatrix(mesh->mBones[i]->mOffsetMatrix);
-		jointInfo[i] = std::make_pair(mesh->mBones[i]->mName.C_Str(), localTransform);
-		aiBone* joint = mesh->mBones[i];
+		for (int i = 0; i < mesh->mNumBones; i++) {
 
-		for (int j = 0; j < joint->mNumWeights; j++) {
+			glm::mat4 localTransform = assimpToGlmMatrix(mesh->mBones[i]->mOffsetMatrix);
+			jointInfo[mesh->mBones[i]->mName.C_Str()] = std::make_pair(i, localTransform);
+			aiBone* joint = mesh->mBones[i];
 
-			uint32_t vertexID = joint->mWeights[j].mVertexId;
-			float weight = joint->mWeights[j].mWeight;
+			for (int j = 0; j < joint->mNumWeights; j++) {
 
-			if (jointPos[vertexID] < JOINT_MAX) {
-				verticesAux[vertexID].joints[jointPos[vertexID]] = i;
-				verticesAux[vertexID].weights[jointPos[vertexID]] = weight;
-				jointPos[vertexID]++;
+				uint32_t vertexID = joint->mWeights[j].mVertexId;
+				float weight = joint->mWeights[j].mWeight;
+
+				if (jointPos[vertexID] < JOINT_MAX) {
+					verticesAux[vertexID].joints[jointPos[vertexID]] = i;
+					verticesAux[vertexID].weights[jointPos[vertexID]] = weight;
+					jointPos[vertexID]++;
+				}
+
 			}
 
 		}
-
-	}
+	//}
 
 	/*
 		Normalize the vertex weights
@@ -362,7 +371,8 @@ bool Loader::loadCollada(const std::string& filePath, std::vector<AnimVertex>& v
 	}
 
 	Joint jointsAux;
-	findJointHierarchy(jointsAux, jointInfo, scene->mRootNode);
+	glm::mat4 rootTransformation = glm::mat4(1.0f);
+	findJointHierarchy(jointsAux, jointInfo, scene->mRootNode, rootTransformation);
 
 	const aiAnimation* animator = scene->mAnimations[0];
 	std::vector<const aiNodeAnim*> anims;
@@ -372,16 +382,22 @@ bool Loader::loadCollada(const std::string& filePath, std::vector<AnimVertex>& v
 	}
 
 	std::vector<Animation> jointAnimations;
-	jointAnimations.resize(animator->mNumChannels);
+	jointAnimations.resize(jointInfo.size());
 	
 	for (int i = 0; i < animator->mNumChannels; i++) {
-		jointAnimations[i].setLength(scene->mAnimations[0]->mDuration);
+		Joint* joint = findJoint(anims[i]->mNodeName.C_Str(), jointsAux);
+		if (!joint)
+			continue;
+		//jointAnimations[i].setLength(scene->mAnimations[0]->mDuration);
+		int index = joint->getID();
 		for (int j = 0; j < anims[0]->mNumPositionKeys; j++) {
-			glm::vec3 pos = *reinterpret_cast<glm::vec3*>(&anims[i]->mPositionKeys[j].mValue);
-			glm::quat rot = *reinterpret_cast<glm::quat*>(&anims[i]->mRotationKeys[j].mValue);
-			glm::vec3 sca = *reinterpret_cast<glm::vec3*>(&anims[i]->mScalingKeys[j].mValue);
+
+			glm::vec3 pos = assimpToGlmVec3(anims[i]->mPositionKeys[j].mValue);
+			glm::quat rot = assimpToGlmQuat(anims[i]->mRotationKeys[j].mValue);
+			glm::vec3 sca = assimpToGlmVec3(anims[i]->mScalingKeys[j].mValue);
 			KeyFrame keyframe = KeyFrame(anims[i]->mPositionKeys[j].mTime, pos, rot, sca);
-			jointAnimations[i].addKeyFrame(keyframe);
+
+			jointAnimations[index].addKeyFrame(keyframe);
 		}
 	}
 
@@ -579,36 +595,41 @@ std::tuple<std::vector<Vertex3D>, std::vector<uint32_t>> Loader::loadHorizontalQ
 }
 
 
-void Loader::findJointHierarchy(Joint& joint, std::unordered_map<uint32_t, std::pair<std::string, glm::mat4>> jointMap,
-	aiNode* node) {
+void Loader::findJointHierarchy(Joint& joint, std::map<std::string, std::pair<uint32_t, glm::mat4>> jointMap,
+	aiNode* node, glm::mat4& rootTransformation) {
 
-	auto it = std::find_if(std::begin(jointMap), std::end(jointMap), [&node](auto&& p) { return p.second.first == node->mName.C_Str(); });
+	auto it = jointMap.find(node->mName.C_Str());
 
 	if (it != jointMap.end()) {
 
 		glm::mat4 transformationMatrix = assimpToGlmMatrix(node->mTransformation);
-		joint.setAttributes(it->first, it->second.first, it->second.second, transformationMatrix);
+		joint.setAttributes(it->second.first, it->first, it->second.second, transformationMatrix);
 		joint.addChildren(node->mNumChildren);
 		
 		for (int i = 0; i < node->mNumChildren; i++) {
-			findJointHierarchy(joint.getChildren(i), jointMap, node->mChildren[i]);
+			findJointHierarchy(joint.getChildren(i), jointMap, node->mChildren[i], rootTransformation);
 		}
 	}
 	else {
 		for (int i = 0; i < node->mNumChildren; i++) {
-			findJointHierarchy(joint, jointMap, node->mChildren[i]);
+			findJointHierarchy(joint, jointMap, node->mChildren[i], rootTransformation);
 		}
 	}
 
 }
 
+Joint* findJoint(const std::string& name, Joint& joint) {
 
-glm::mat4 Loader::assimpToGlmMatrix(aiMatrix4x4 mat) {
-	glm::mat4 m;
-	for (int y = 0; y < 4; y++) {
-		for (int x = 0; x < 4; x++) {
-			m[x][y] = mat[y][x];
-		}
+	if (joint.getName() == name) {
+		return &joint;
 	}
-	return m;
+	else {
+		for (int i = 0; i < joint.getChildrenCount(); i++) {
+			Joint* res = findJoint(name, joint.getChildren(i));
+			if (res != nullptr)
+				return res;
+		}
+		return nullptr;
+	}
+
 }

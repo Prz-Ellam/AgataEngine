@@ -47,13 +47,13 @@ void main() {
 	matrices[14] = mat4(0.929486, 0.285367, 0.233714, -0.494204, 0.112822, 0.3833, -0.916706, 1.49828, -0.351179, 0.878438, 0.324073, 1.26283, 0, 0, 0, 1);
 	matrices[15] = mat4(0.929165, 0.337948, 0.149815, -0.4655, 0.176934, -0.0507331, -0.982912, 1.64015, -0.324572, 0.9398, -0.106936, 1.46263, 0, 0, 0, 1); 
 	
-	//mat4 bone_transform = u_Joints[int(a_JointID[0])] * a_Weights[0];
-	//	 bone_transform += u_Joints[int(a_JointID[1])] * a_Weights[1];
-	//	 bone_transform += u_Joints[int(a_JointID[2])] * a_Weights[2];
-	//		
-	//vec4 posePosition = bone_transform * vec4(a_Pos, 1.0); // transformed by bones
+	mat4 bone_transform = u_Joints[int(a_JointID[0])] * a_Weights[0];
+		 bone_transform += u_Joints[int(a_JointID[1])] * a_Weights[1];
+		 bone_transform += u_Joints[int(a_JointID[2])] * a_Weights[2];
+			
+	vec4 posePosition = bone_transform * vec4(a_Pos, 1.0); // transformed by bones
 
-	vec4 worldPos = u_Model * vec4(a_Pos, 1.0);
+	vec4 worldPos = u_Model * posePosition;
 	gl_ClipDistance[0] = dot(worldPos, u_Plane);
 	gl_Position = u_Projection * u_View * worldPos;
 

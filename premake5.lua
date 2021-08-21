@@ -35,7 +35,7 @@ project "Agata"
 
 	libdirs {
 		"$(SolutionDir)Vendor/GLFW/$(Platform)/lib-vc2019",
-		"$(SolutionDir)Vendor/GLEW/$(Platform)/lib"
+		"$(SolutionDir)Vendor/GLEW/$(Platform)/lib",
 		"$(SolutionDir)Vendor/Assimp/$(Platform)/lib"
 	}
 

@@ -10,6 +10,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <memory>
+#include <map>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 class AnimatedModel {
 public:
@@ -26,7 +30,6 @@ public:
 
 	void draw(std::shared_ptr<Shader> shader, Light& light, float ts, const glm::vec4& clipDistance = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 
-	void loadJointsTransforms(float timeStamp, std::vector<glm::mat4>& transformations);
 	void findTransformations(float animationTime, Joint& m_RootJoint, const glm::mat4& parent, std::vector<glm::mat4>& transformations);
 
 
@@ -38,12 +41,30 @@ private:
 
 	glm::mat4 m_GlobalInverseTransformation;
 
+	
+
 	std::vector<Animation> animations;
 	std::vector<int> locations;
 
 	glm::vec3 lerpPosition(float animationTime, uint32_t jointID);
 	glm::quat lerpRotation(float animationTime, uint32_t jointID);
 	glm::vec3 lerpScale(float animationTime, uint32_t jointID);
+
+	Assimp::Importer importer;
+	const aiScene* scene;
+	std::vector<Mesh> meshes;
+	std::map<std::string, uint32_t> jointInfo;
+	std::vector< std::pair<glm::mat4, glm::mat4>> jointTransformations;
+	std::map<std::string, const aiNodeAnim*> animationInfo;
+
+	void loadModel(const std::string& path);
+	void processNode(aiNode* node, const aiScene* scene);
+	Mesh processMesh(aiMesh* mesh, const aiScene* scene, std::vector<AnimVertex>& vertices, std::vector<uint32_t>& indices);
+	void loadJointsTransforms(float timeStamp, std::vector<glm::mat4>& transformations);
+	void findTransformations(float timeStamp, const aiNode* node, const glm::mat4 parentTransformation);
+	glm::vec3 lerpPosition(float animationTime, const aiNodeAnim* node);
+	glm::quat lerpRotation(float animationTime, const aiNodeAnim* node);
+	glm::vec3 lerpScale(float animationTime, const aiNodeAnim* node);
 
 	glm::vec4 m_Colour;
 	glm::vec3 m_Position;

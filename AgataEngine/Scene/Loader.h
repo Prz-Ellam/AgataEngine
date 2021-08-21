@@ -7,6 +7,7 @@
 #include <vector>
 #include <sstream>
 #include <utility>
+#include <map>
 #include <unordered_map>
 #include "BufferLayout.h"
 #include "VertexArray.h"
@@ -29,10 +30,8 @@ public:
 	static bool loadCollada(const std::string& filePath, std::vector<AnimVertex>& vertices, std::vector<uint32_t>& indices,
 	Joint& joints, std::vector<Animation>& animations, glm::mat4& globalInverse);
 
-	static void findJointHierarchy(Joint& joint, std::unordered_map<uint32_t, std::pair<std::string, glm::mat4>> jointMap, 
-		aiNode* node);
-
-	static glm::mat4 assimpToGlmMatrix(aiMatrix4x4 mat);
+	static void findJointHierarchy(Joint& joint, std::map<std::string, std::pair<uint32_t, glm::mat4>> jointMap,
+		aiNode* node, glm::mat4& rootTransformation);
 
 	static bool loadCube(std::vector<Vertex3D>& vertices, std::vector<uint32_t>& indices);
 
