@@ -48,7 +48,6 @@ glm::mat4 AnimatedModel::getTransformation() const {
 
 void AnimatedModel::draw(std::shared_ptr<Shader> shader, Light& light, float ts, const glm::vec4& clipDistance) {
 
-	ts = 0.2f;
 	std::vector<glm::mat4> transformations;
 	loadJointsTransforms(ts, transformations);
 
@@ -81,148 +80,6 @@ void AnimatedModel::draw(std::shared_ptr<Shader> shader, Light& light, float ts,
 
 }
 
-
-//void AnimatedModel::loadJointsTransforms(float timeStamp, std::vector<glm::mat4>& transformations) {
-//
-//	glm::mat4 identity = glm::mat4(1.0f);
-//	float animationTime = fmod(timeStamp, animations[0].getLength());
-//
-//	transformations.resize(m_JointCount);
-//	findTransformations(animationTime, m_RootJoint, identity, transformations);
-//
-//}
-
-void AnimatedModel::findTransformations(float animationTime, Joint& m_RootJoint, const glm::mat4& parent, 
-	std::vector<glm::mat4>& transformations) {
-
-	if (m_RootJoint.getName() == "")
-		return;
-
-	glm::mat4 transformationMatrix = m_RootJoint.getTransformationMatrix();
-	//auto* a = glm::value_ptr(transformationMatrix);
-
-	glm::vec3 lerpPos = lerpPosition(animationTime, m_RootJoint.getID());
-	glm::quat lerpRot = lerpRotation(animationTime, m_RootJoint.getID());
-	glm::vec3 lerpSca = lerpScale(animationTime, m_RootJoint.getID());
-
-	glm::mat4 out = glm::translate(glm::mat4(1.0f), lerpPos);
-	out = out * glm::mat4_cast(lerpRot);
-	out = glm::scale(out, lerpSca);
-
-	//auto* a = glm::value_ptr(out);
-
-	glm::mat4 globalTransform = parent * out;
-	
-	transformations[m_RootJoint.getID()] = glm::transpose(m_GlobalInverseTransformation) * globalTransform *
-		m_RootJoint.getOffsetMatrix();
-	auto* a = glm::value_ptr(transformations[m_RootJoint.getID()]);
-
-	for (int i = 0; i < m_RootJoint.getChildrenCount(); i++) {
-
-		findTransformations(animationTime, m_RootJoint.getChildren(i), globalTransform, transformations);
-
-	}
-
-}
-
-glm::vec3 AnimatedModel::lerpPosition(float animationTime, uint32_t jointID) {
-
-	int positionIndex = 0, nextPosition;
-
-	std::vector<KeyFrame> keyframes = animations[jointID].getKeyFrames();
-	for (int i = 0; i < keyframes.size() - 1; i++) {
-		if (animationTime < keyframes[i + 1].getTimeStamp()) {
-			positionIndex = i;
-			break;
-		}
-	}
-
-	nextPosition = positionIndex + 1;
-	float dt = keyframes[nextPosition].getTimeStamp() - keyframes[positionIndex].getTimeStamp();
-	float factor = (animationTime - keyframes[positionIndex].getTimeStamp()) / dt;
-	glm::vec3 start = keyframes[positionIndex].getPosition();
-	glm::vec3 end = keyframes[nextPosition].getPosition();
-	glm::vec3 delta = end - start;
-
-	return start + factor * delta;
-
-}
-
-glm::quat AnimatedModel::lerpRotation(float animationTime, uint32_t jointID) {
-
-	int positionIndex = 0, nextPosition;
-
-	std::vector<KeyFrame> keyframes = animations[jointID].getKeyFrames();
-	for (int i = 0; i < keyframes.size() - 1; i++) {
-		if (animationTime < keyframes[i + 1].getTimeStamp()) {
-			positionIndex = i;
-			break;
-		}
-	}
-
-	nextPosition = positionIndex + 1;
-	float dt = keyframes[nextPosition].getTimeStamp() - keyframes[positionIndex].getTimeStamp();
-	float factor = (animationTime - keyframes[positionIndex].getTimeStamp()) / dt;
-	glm::quat start = keyframes[positionIndex].getRotation();
-	glm::quat end = keyframes[nextPosition].getRotation();
-	
-	//cout << a.w + a.x + a.y + a.z << endl;
-	start = glm::normalize(start);
-	end = glm::normalize(end);
-
-	glm::quat result;
-	float dot = start.x * end.x + start.y * end.y + start.z * end.z + start.w * end.w;
-	float one_minus_blend = 1.0f - factor;
-
-	if (dot < 0.0f)
-	{
-		result.x = start.x * one_minus_blend + factor * -end.x;
-		result.y = start.y * one_minus_blend + factor * -end.y;
-		result.z = start.z * one_minus_blend + factor * -end.z;
-		result.w = start.w * one_minus_blend + factor * -end.w;
-	}
-	else
-	{
-		result.x = start.x * one_minus_blend + factor * end.x;
-		result.y = start.y * one_minus_blend + factor * end.y;
-		result.z = start.z * one_minus_blend + factor * end.z;
-		result.w = start.w * one_minus_blend + factor * end.w;
-	}
-
-	return glm::normalize(result);
-
-}
-
-glm::vec3 AnimatedModel::lerpScale(float animationTime, uint32_t jointID) {
-
-	int positionIndex = 0, nextPosition;
-
-	std::vector<KeyFrame> keyframes = animations[jointID].getKeyFrames();
-	for (int i = 0; i < keyframes.size() - 1; i++) {
-		if (animationTime < keyframes[i + 1].getTimeStamp()) {
-			positionIndex = i;
-			break;
-		}
-	}
-
-	nextPosition = positionIndex + 1;
-	float dt = keyframes[nextPosition].getTimeStamp() - keyframes[positionIndex].getTimeStamp();
-	float factor = (animationTime - keyframes[positionIndex].getTimeStamp()) / dt;
-	glm::vec3 start = keyframes[positionIndex].getScale();
-	glm::vec3 end = keyframes[nextPosition].getScale();
-	glm::vec3 delta = end - start;
-
-	return start + factor * delta;
-
-}
-
-
-
-
-
-
-
-
 void AnimatedModel::loadModel(const std::string& path) {
 
 	scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
@@ -235,6 +92,13 @@ void AnimatedModel::loadModel(const std::string& path) {
 
 	m_GlobalInverseTransformation = assimpToGlmMatrix(scene->mRootNode->mTransformation);
 	m_GlobalInverseTransformation = glm::inverse(m_GlobalInverseTransformation);
+
+	if (scene->mAnimations[0]->mTicksPerSecond != 0.0) {
+		ticksPerSec = scene->mAnimations[0]->mTicksPerSecond;
+	}
+	else {
+		ticksPerSec = 25.0f;
+	}
 
 	processNode(scene->mRootNode, scene);
 
@@ -347,7 +211,7 @@ Mesh AnimatedModel::processMesh(aiMesh* mesh, const aiScene* scene, std::vector<
 			float weight = joint->mWeights[j].mWeight;
 
 			if (jointPos[vertexID] < 3) {
-				vertices[vertexID].joints[jointPos[vertexID]] = i;
+				vertices[vertexID].joints[jointPos[vertexID]] = jointIndex;
 				vertices[vertexID].weights[jointPos[vertexID]] = weight;
 				jointPos[vertexID]++;
 			}
@@ -360,10 +224,9 @@ Mesh AnimatedModel::processMesh(aiMesh* mesh, const aiScene* scene, std::vector<
 
 void AnimatedModel::loadJointsTransforms(float timeStamp, std::vector<glm::mat4>& transformations) {
 
-	glm::mat4 identity = glm::mat4(1.0f);
-	float animationTime = fmod(timeStamp, scene->mAnimations[0]->mDuration);
-
-	findTransformations(animationTime, scene->mRootNode, identity);
+	float timeTicks = timeStamp * ticksPerSec;
+	float animationTime = fmod(timeTicks, scene->mAnimations[0]->mDuration);
+	findTransformations(animationTime, scene->mRootNode);
 
 	transformations.resize(m_JointCount);
 	for (uint32_t i = 0; i < m_JointCount; i++) {
@@ -394,16 +257,13 @@ void AnimatedModel::findTransformations(float timeStamp, const aiNode* node, con
 
 	glm::mat4 globalTransform = parentTransformation * nodeTransform;
 
- 
-	if (jointInfo.find(nodeName) != jointInfo.end())
-	{
+	if (jointInfo.find(nodeName) != jointInfo.end()) {
 		uint32_t jointID = jointInfo[nodeName];
 		jointTransformations[jointID].second = m_GlobalInverseTransformation * globalTransform 
 			* jointTransformations[jointID].first;
 	}
 
-	for (uint32_t i = 0; i < node->mNumChildren; i++)
-	{
+	for (uint32_t i = 0; i < node->mNumChildren; i++) {
 		findTransformations(timeStamp, node->mChildren[i], globalTransform);
 	}
 
@@ -425,7 +285,7 @@ glm::vec3 AnimatedModel::lerpPosition(float animationTime, const aiNodeAnim* nod
 
 	nextPosition = positionIndex + 1;
 	float dt = (float)(node->mPositionKeys[nextPosition].mTime - node->mPositionKeys[positionIndex].mTime);
-	float factor = (animationTime - (float)node->mPositionKeys[nextPosition].mTime) / dt;
+	float factor = (animationTime - (float)node->mPositionKeys[positionIndex].mTime) / dt;
 	glm::vec3 start = assimpToGlmVec3(node->mPositionKeys[positionIndex].mValue);
 	glm::vec3 end = assimpToGlmVec3(node->mPositionKeys[nextPosition].mValue);
 	glm::vec3 delta = end - start;
@@ -496,7 +356,7 @@ glm::vec3 AnimatedModel::lerpScale(float animationTime, const aiNodeAnim* node) 
 
 	nextPosition = positionIndex + 1;
 	float dt = (float)(node->mScalingKeys[nextPosition].mTime - node->mScalingKeys[positionIndex].mTime);
-	float factor = (animationTime - (float)node->mScalingKeys[nextPosition].mTime) / dt;
+	float factor = (animationTime - (float)node->mScalingKeys[positionIndex].mTime) / dt;
 	glm::vec3 start = assimpToGlmVec3(node->mScalingKeys[positionIndex].mValue);
 	glm::vec3 end = assimpToGlmVec3(node->mScalingKeys[nextPosition].mValue);
 	glm::vec3 delta = end - start;
@@ -504,20 +364,6 @@ glm::vec3 AnimatedModel::lerpScale(float animationTime, const aiNodeAnim* node) 
 	return start + factor * delta;
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

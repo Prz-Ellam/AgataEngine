@@ -10,7 +10,17 @@
 
 glm::mat4 transformationMatrix(const glm::vec3& pos, const glm::vec3& rot, const glm::vec3& scale);
 glm::mat4 assimpToGlmMatrix(aiMatrix4x4 mat);
-glm::vec3 assimpToGlmVec3(const aiVector3D& vec3);
-glm::quat assimpToGlmQuat(const aiQuaternion& q);
+
+inline glm::vec3 assimpToGlmVec3(const aiVector3D& v) {
+
+	return glm::vec3(v.x, v.y, v.z);
+
+}
+
+inline glm::quat assimpToGlmQuat(const aiQuaternion& q) {
+
+	return glm::quat(q.w, q.x, q.y, q.z);
+
+}
 
 #endif

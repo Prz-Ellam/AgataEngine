@@ -72,11 +72,11 @@ void Scene3D::init() {
 		//	BuildHeap();
 
 		animatedModel = AnimatedModelBuilder().
-			ModelPath("Assets\\model.dae"s).
+			ModelPath("Assets\\silly_dancing.fbx"s).
 			Position(glm::vec3(6.10f, 1.4f, 11.12f)).
-			Rotation(glm::vec3(-90.0f, 0.0f, 0.0f)).
-			Scale(glm::vec3(0.2f)).
-			DiffuseTexture("Assets\\Character Texture.png"s).
+			Rotation(glm::vec3(0.0f, 0.0f, 0.0f)).
+			Scale(glm::vec3(0.4f)).
+			DiffuseTexture("Assets\\Stormtrooper_D.png"s).
 			//SpecularTexture("Assets\\barrelSpecular.png"s).
 			//NormalTexture("Assets\\normal.png"s).
 			AmbientMaterial(glm::vec3(0.75f)).
@@ -222,7 +222,7 @@ void Scene3D::run() {
 		m_Renderer.beginScene(m_InvertCamera);
 		water->startReflection();
 		m_Renderer.clear(0.1f, 0.1f, 0.1f, 1.0f);
-		animatedModel->draw(shaderModel, *light, ts, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+		//animatedModel->draw(shaderModel, *light, ts, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 		terrain->draw(shaderTerrain, *light, glm::vec4(0.0f, 1.0f, 0.0f, -water->getHeight()));
 		skybox->draw(shaderSkybox, *light);
 		billboard->draw(shaderBill, *light);
@@ -234,7 +234,7 @@ void Scene3D::run() {
 		m_Renderer.beginScene(m_Camera);
 		water->startRefraction();
 		m_Renderer.clear(0.1f, 0.1f, 0.1f, 1.0f);
-		animatedModel->draw(shaderModel, *light, ts, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+		//animatedModel->draw(shaderModel, *light, ts, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 		terrain->draw(shaderTerrain, *light, glm::vec4(0.0f, -1.0f, 0.0f, water->getHeight()));
 		skybox->draw(shaderSkybox, *light);
 		billboard->draw(shaderBill, *light);
