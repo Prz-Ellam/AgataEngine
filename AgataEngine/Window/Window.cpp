@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Window.h"
 #include "Log.h"
 #include <stb/stb_image.h>
@@ -89,7 +90,7 @@ bool Window::isVSync() const {
 
 }
 
-std::string Window::getWindowTitle() {
+std::string Window::getWindowTitle() const {
 
 	return m_WindowData.title;
 
@@ -162,6 +163,19 @@ void Window::setMouseMoveEventHandler(MouseMoveEventFn handler) {
 
 		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 		data.mouseMoveEventHandler(MouseMoveEvent(x, y));
+
+	});
+
+}
+
+void Window::setScrollEventHandler(MouseScrollEventFn handler) {
+
+	m_WindowData.mouseScrollEventHandler = handler;
+
+	glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset) {
+
+		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+		data.mouseScrollEventHandler(MouseScrollEvent(xOffset, yOffset));
 
 	});
 

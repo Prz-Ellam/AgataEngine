@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <array>
+#include <map>
 #include <unordered_map>
 #include <tuple>
 
@@ -12,9 +13,12 @@
 #include <sstream>
 #include <memory>
 #include <thread>
+#include <functional>
 
 #include <stdint.h>
 #include <cmath>
+
+#include <Windows.h>
 
 
 #endif

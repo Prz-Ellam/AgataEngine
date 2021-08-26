@@ -1,31 +1,7 @@
 #include "pch.h"
-
-#include <GL/glew.h>
-#include <stb/stb_image.h>
-#include <stb/stb_image.cpp>
-#include "Shader.h"
-#include "Renderer.h"
-#include "Camera.h"
-#include <iostream>
-#include "Log.h"
-
-#include "Loader.h"
-#include "FrameBuffer.h"
-#include "Billboard.h"
-#include "Light.h"
-#include "Terrain.h"
-#include "Skybox.h"
-#include "Water.h"
-#include "Window.h"
-#include "Scene.h"
 #include "Scene3D.h"
-
-#include "Timer.h"
-#include "Model.h"
-
-#include <imgui/imgui.h>
-#include <imgui/imgui_impl_glfw.h>
-#include <imgui/imgui_impl_opengl3.h>
+#include <Windows.h>
+#include <stb/stb_image.cpp>
 
 //int Nomain() {
 //

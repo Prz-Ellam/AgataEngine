@@ -72,17 +72,17 @@ void Scene3D::init() {
 		//	BuildHeap();
 
 		animatedModel = AnimatedModelBuilder().
-			ModelPath("Assets\\silly_dancing.fbx"s).
+			ModelPath("Assets\\Character.fbx"s).
 			Position(glm::vec3(6.10f, 1.4f, 11.12f)).
 			Rotation(glm::vec3(0.0f, 0.0f, 0.0f)).
-			Scale(glm::vec3(0.4f)).
-			DiffuseTexture("Assets\\Stormtrooper_D.png"s).
+			Scale(glm::vec3(0.01f)).
+			DiffuseTexture("Assets\\CharacterDiffuse.jpg"s).
 			//SpecularTexture("Assets\\barrelSpecular.png"s).
 			//NormalTexture("Assets\\normal.png"s).
 			AmbientMaterial(glm::vec3(0.75f)).
 			DiffuseMaterial(glm::vec3(0.85f)).
-			SpecularMaterial(glm::vec3(1.0f)).
-			ShininessMaterial(32).
+			SpecularMaterial(glm::vec3(0.0f)).
+			ShininessMaterial(0).
 			BuildHeap();
 	}
 
@@ -134,8 +134,8 @@ void Scene3D::shutdown() {
 
 	delete imGui;
 	delete m_Window;
-	delete model;
-	//delete animatedModel;
+	//delete model;
+	delete animatedModel;
 	delete terrain;
 	delete skybox;
 	delete billboard;
@@ -195,15 +195,15 @@ void Scene3D::run() {
 
 		if (lightAngle < 160.0f && lightAngle > 120.0f) {
 
-			light->setColourG(0.00125);
-			light->setColourB(0.00125);
+			light->setColourG(0.00125f);
+			light->setColourB(0.00125f);
 
 		}
 
 		if (lightAngle < 60.0f && lightAngle > 20.0f) {
 
-			light->setColourG(-0.00125);
-			light->setColourB(-0.00125);
+			light->setColourG(-0.00125f);
+			light->setColourB(-0.00125f);
 
 		}
 		
@@ -287,6 +287,9 @@ void Scene3D::windowMoveEvent(WindowMoveEvent e) {
 }
 
 void Scene3D::mouseMoveEvent(MouseMoveEvent e) {
+
+	m_Camera->move(m_Window->getHandler(), e);
+	m_InvertCamera->move(m_Window->getHandler(), e);
 
 	//Log::info("%s", e.toString().c_str());
 	//Log::info("%.4f , %.4f",(e.getX() / m_Window->getWidth()) * 2.0f - 1.0f, 

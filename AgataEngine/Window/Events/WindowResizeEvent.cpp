@@ -1,5 +1,5 @@
 #include "WindowResizeEvent.h"
-#include <sstream>
+#include "pch.h"
 
 WindowResizeEvent::WindowResizeEvent(): m_Width(0), m_Height(0) {
 

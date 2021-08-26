@@ -7,6 +7,7 @@
 
 #include <GLFW/glfw3.h>
 #include "Terrain.h"
+#include "Events/MouseMoveEvent.h"
 
 class PerspectiveCameraProps {
 public:
@@ -37,6 +38,10 @@ private:
 
 	bool m_Fly;
 
+	float lastX, lastY;
+	bool firstMouse;
+
+
 	// tempora
 	bool isPressed = false;
 
@@ -45,6 +50,8 @@ public:
 	void update();
 	void move(GLFWwindow* window, Terrain& terrain, float deltaTime);
 	glm::vec3& getPosition();
+
+	void move(GLFWwindow* window, MouseMoveEvent e);
 
 	void setSpeed(float speed);
 	void setSensitivity(float sensitivity);

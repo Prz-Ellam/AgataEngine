@@ -1,5 +1,5 @@
 #include "WindowMoveEvent.h"
-#include <sstream>
+#include "pch.h"
 
 WindowMoveEvent::WindowMoveEvent() : m_X(0), m_Y(0) {
 

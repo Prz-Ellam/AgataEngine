@@ -1,5 +1,5 @@
 #include "MouseMoveEvent.h"
-#include <sstream>
+#include "pch.h"
 
 MouseMoveEvent::MouseMoveEvent() : m_X(0), m_Y(0) {
 

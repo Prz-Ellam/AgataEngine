@@ -16,7 +16,8 @@ public:
 	void setAttributes(uint32_t id, const std::string& name, const glm::mat4& offsetMatrix, const glm::mat4& transformation);
 	void addChildren(uint32_t count);
 	Joint& getChildren(uint32_t index);
-	uint32_t getChildrenCount() const {
+
+	size_t getChildrenCount() const {
 		return m_ChildrenJoint.size();
 	}
 

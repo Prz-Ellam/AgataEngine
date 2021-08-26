@@ -87,24 +87,16 @@ void Camera::move(GLFWwindow * window, Terrain &terrain, float deltaTime) {
 	m_YawAcceleration = 0.0f;
 	m_PitchAcceleration = 0.0f;
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-
 		m_YawAcceleration -= m_Sensitivity;
-
 	}
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-		
 		m_YawAcceleration += m_Sensitivity;
-
 	}
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-		
 		m_PitchAcceleration += m_Sensitivity * m_PitchDirection;
-
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		
 		m_PitchAcceleration -= m_Sensitivity * m_PitchDirection;
-
 	}
 
 	m_PitchAcceleration -= m_PitchVelocity * 12.0f;
@@ -142,6 +134,44 @@ void Camera::move(GLFWwindow * window, Terrain &terrain, float deltaTime) {
 		m_Position.y = terrain.getHeight(m_Position.x, m_Position.z) + 0.6f;
 		m_UpVelocity = 0.0f;
 	}
+
+	m_View = glm::lookAt(m_Position, m_Position + m_Forward, m_Up);
+	m_Projection = glm::perspective(glm::radians(m_Properties.fov), m_Properties.aspect, m_Properties.nearPlane, m_Properties.farPlane);
+
+}
+
+void Camera::move(GLFWwindow* window, MouseMoveEvent e) {
+
+	if (firstMouse) {
+		lastX = e.getX();
+		lastY = e.getY();
+		firstMouse = false;
+	}
+
+	float xoffset = e.getX() - lastX;
+	float yoffset = lastY - e.getY();
+	lastX = e.getX();
+	lastY = e.getY();
+
+	float sensitivity = 0.1f;
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	m_Yaw += xoffset;
+	m_Pitch += yoffset;
+
+	if (m_Pitch > 89.0f)
+		m_Pitch = 89.0f;
+	if (m_Pitch < -89.0f)
+		m_Pitch = -89.0f;
+
+	glm::vec3 direction;
+	direction.x = glm::cos(glm::radians(m_Yaw)) * glm::cos(glm::radians(m_Pitch));
+	direction.y = glm::sin(glm::radians(m_Pitch));
+	direction.z = glm::sin(glm::radians(m_Yaw)) * glm::cos(glm::radians(m_Pitch));
+
+	m_Forward = glm::normalize(direction);
+	m_Right = glm::normalize(glm::cross(m_Forward, m_Up));
 
 	m_View = glm::lookAt(m_Position, m_Position + m_Forward, m_Up);
 	m_Projection = glm::perspective(glm::radians(m_Properties.fov), m_Properties.aspect, m_Properties.nearPlane, m_Properties.farPlane);

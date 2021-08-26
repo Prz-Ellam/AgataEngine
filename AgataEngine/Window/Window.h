@@ -1,5 +1,5 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#ifndef AGATA_WINDOW_H
+#define AGATA_WINDOW_H
 
 #include <GLFW/glfw3.h>
 #include <string>
@@ -9,11 +9,13 @@
 #include "Events/WindowMoveEvent.h"
 #include "Events/WindowCloseEvent.h"
 #include "Events/MouseMoveEvent.h"
+#include "Events/MouseScrollEvent.h"
 
 using WindowResizeEventFn = std::function<void(WindowResizeEvent)>;
 using WindowMoveEventFn = std::function<void(WindowMoveEvent)>;
 using WindowCloseEventFn = std::function<void(WindowCloseEvent)>;
 using MouseMoveEventFn = std::function<void(MouseMoveEvent)>;
+using MouseScrollEventFn = std::function<void(MouseScrollEvent)>;
 
 class Window {
 public:
@@ -29,7 +31,7 @@ public:
 	void setVSync(bool enabled);
 	bool isVSync() const;
 
-	std::string getWindowTitle();
+	std::string getWindowTitle() const;
 	void setWindowTitle(const std::string& title);
 
 	void setIcons(const std::string& filePath);
@@ -40,6 +42,7 @@ public:
 	void setWindowMoveEventHandler(WindowMoveEventFn handler);
 	void setWindowCloseEventHandler(WindowCloseEventFn handler);
 	void setMouseMoveEventHandler(MouseMoveEventFn handler);
+	void setScrollEventHandler(MouseScrollEventFn handler);
 
 private:
 	GLFWwindow* m_Window;
@@ -52,6 +55,7 @@ private:
 		WindowMoveEventFn windowMoveEventHandler;
 		WindowCloseEventFn windowCloseEventHandler;
 		MouseMoveEventFn mouseMoveEventHandler;
+		MouseScrollEventFn mouseScrollEventHandler;
 	} m_WindowData;
 
 };
