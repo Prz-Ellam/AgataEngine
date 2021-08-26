@@ -20,6 +20,7 @@ public:
 	virtual void windowCloseEvent(WindowCloseEvent e);
 	virtual void windowMoveEvent(WindowMoveEvent e);
 	virtual void mouseMoveEvent(MouseMoveEvent e);
+	virtual void keyEvent(KeyEvent e);
 	virtual void imGuiEvent(bool a);
 protected:
 	Window* m_Window;

@@ -158,7 +158,7 @@ void Camera::move(GLFWwindow* window, MouseMoveEvent e) {
 	yoffset *= sensitivity;
 
 	m_Yaw += xoffset;
-	m_Pitch += yoffset;
+	m_Pitch += yoffset * m_PitchDirection;
 
 	if (m_Pitch > 89.0f)
 		m_Pitch = 89.0f;

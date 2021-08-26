@@ -152,6 +152,7 @@ void Scene3D::setCallbacks() {
 	m_Window->setWindowCloseEventHandler(EVENT_FN(Scene3D::windowCloseEvent));
 	m_Window->setWindowMoveEventHandler(EVENT_FN(Scene3D::windowMoveEvent));
 	m_Window->setMouseMoveEventHandler(EVENT_FN(Scene3D::mouseMoveEvent));
+	m_Window->setKeyEventHandler(EVENT_FN(Scene3D::keyEvent));
 
 }
 
@@ -294,6 +295,23 @@ void Scene3D::mouseMoveEvent(MouseMoveEvent e) {
 	//Log::info("%s", e.toString().c_str());
 	//Log::info("%.4f , %.4f",(e.getX() / m_Window->getWidth()) * 2.0f - 1.0f, 
 	//	(1 - e.getY() / m_Window->getHeight()) * 2.0f - 1.0f); // Window coordinates to Normalized device coordinate system conversion
+
+}
+
+void Scene3D::keyEvent(KeyEvent e) {
+
+	if (e.getKeyCode() == GLFW_KEY_ESCAPE && e.getAction() == GLFW_PRESS) {
+		m_Running = false;
+	}
+
+	if (e.getKeyCode() == GLFW_KEY_P && e.getAction() == GLFW_PRESS) {
+		if (glfwGetInputMode(m_Window->getHandler(), GLFW_CURSOR) == GLFW_CURSOR_NORMAL) {
+			glfwSetInputMode(m_Window->getHandler(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		}
+		else {
+			glfwSetInputMode(m_Window->getHandler(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		}
+	}
 
 }
 

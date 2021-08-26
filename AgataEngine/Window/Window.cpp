@@ -180,3 +180,16 @@ void Window::setScrollEventHandler(MouseScrollEventFn handler) {
 	});
 
 }
+
+void Window::setKeyEventHandler(KeyEventFn handler) {
+
+	m_WindowData.keyEventHandler = handler;
+
+	glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+
+		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+		data.keyEventHandler(KeyEvent(key, action));
+
+	});
+
+}

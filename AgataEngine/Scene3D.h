@@ -29,6 +29,7 @@ public:
 	void windowCloseEvent(WindowCloseEvent e) override;
 	void windowMoveEvent(WindowMoveEvent e) override;
 	void mouseMoveEvent(MouseMoveEvent e) override;
+	void keyEvent(KeyEvent e) override;
 	void imGuiEvent(bool a) override;
 private:
 	ImGuiLayer* imGui;

@@ -51,6 +51,10 @@ void Scene::mouseMoveEvent(MouseMoveEvent e) {
 
 }
 
+void Scene::keyEvent(KeyEvent e) {
+
+}
+
 void Scene::imGuiEvent(bool a) {
 
 }
