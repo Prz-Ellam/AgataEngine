@@ -264,7 +264,7 @@
 
 int main(int argc, char** argv) {
 
-	Scene* scene = new Scene3D();
+	Agata::Scene* scene = new Agata::Scene3D();
 	scene->run();
 	delete scene;
 
@@ -272,7 +272,7 @@ int main(int argc, char** argv) {
 
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow) {
 
-	Scene* scene = new Scene3D();
+	Agata::Scene* scene = new Agata::Scene3D();
 	scene->run();
 	delete scene;
 

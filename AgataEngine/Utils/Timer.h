@@ -1,10 +1,10 @@
-#ifndef ONFER_TIMER_H
-#define ONFER_TIMER_H
+#ifndef AGATA_TIMER_H
+#define AGATA_TIMER_H
 
 #include <Windows.h>
 #include <string>
 
-namespace Onfer {
+namespace Agata {
 
 	class Timer {
 	public:
@@ -21,6 +21,6 @@ namespace Onfer {
 
 }
 
-#define ONF_PROFILE() Timer time(__FUNCTION__)
+#define AGATA_PROFILE() Timer time(__FUNCTION__)
 
 #endif

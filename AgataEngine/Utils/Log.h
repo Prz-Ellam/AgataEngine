@@ -1,5 +1,5 @@
-#ifndef ONFER_LOG_H
-#define ONFER_LOG_H
+#ifndef AGATA_LOG_H
+#define AGATA_LOG_H
 
 #include <string>
 

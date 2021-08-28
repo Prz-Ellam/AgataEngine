@@ -2,24 +2,28 @@
 #include "Loader.h"
 #include "Renderer.h"
 
-Zoom::Zoom(const std::string& shape) : m_Shape(shape) {
+namespace Agata {
 
-	auto [vertices, indices] = Loader::loadQuad();
+	Zoom::Zoom(const std::string& shape) : m_Shape(shape) {
 
-	m_Mesh = new Mesh(vertices, indices);
+		auto [vertices, indices] = Loader::loadQuad();
 
-}
+		m_Mesh = new Mesh(vertices, indices);
 
-Zoom::~Zoom() {
+	}
 
-	delete m_Mesh;
+	Zoom::~Zoom() {
 
-}
+		delete m_Mesh;
 
-void Zoom::draw(std::shared_ptr<Shader> shader) {
+	}
 
-	shader->bind();
-	shader->sendInt1("u_Shape", m_Shape.bind(0));
-	Renderer::drawIndex(m_Mesh->getVertexArray(), m_Mesh->getIndexCount());
+	void Zoom::draw(std::shared_ptr<Shader> shader) {
+
+		shader->bind();
+		shader->sendInt1("u_Shape", m_Shape.bind(0));
+		Renderer::drawIndex(m_Mesh->getVertexArray(), m_Mesh->getIndexCount());
+
+	}
 
 }

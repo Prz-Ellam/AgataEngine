@@ -2,7 +2,7 @@
 #include "Log.h"
 #include "pch.h"
 
-namespace Onfer {
+namespace Agata {
 
 	Timer::Timer(const std::string& name) {
 

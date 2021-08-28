@@ -1,5 +1,5 @@
-#ifndef RENDERER_H
-#define RENDERER_H
+#ifndef AGATA_RENDERER_H
+#define AGATA_RENDERER_H
 
 #include "Terrain.h"
 #include "Skybox.h"
@@ -13,27 +13,31 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Window.h"
 
-class Renderer {
-public:
-	Renderer();
-	~Renderer();
-	void backCullface();
-	void viewport(Window* window);
-	void clear(float r, float g, float b, float a);
+namespace Agata {
 
-	static glm::mat4 getView();
-	static glm::mat4 getProjection();
-	static glm::vec3 getPosition();
+	class Renderer {
+	public:
+		Renderer();
+		~Renderer();
+		void backCullface();
+		void viewport(Window* window);
+		void clear(float r, float g, float b, float a);
 
-	void beginScene(Camera* camera);
-	void endScene();
+		static glm::mat4 getView();
+		static glm::mat4 getProjection();
+		static glm::vec3 getPosition();
 
-	static void drawIndex(VertexArray* vao, uint32_t indexCount);
-	static void drawArray(VertexArray* vao, uint32_t arrayCount);
-private:
-	static glm::mat4 s_Projection;
-	static glm::mat4 s_View;
-	static glm::vec3 s_Position;
-};
+		void beginScene(Camera* camera);
+		void endScene();
+
+		static void drawIndex(VertexArray* vao, uint32_t indexCount);
+		static void drawArray(VertexArray* vao, uint32_t arrayCount);
+	private:
+		static glm::mat4 s_Projection;
+		static glm::mat4 s_View;
+		static glm::vec3 s_Position;
+	};
+
+}
 
 #endif

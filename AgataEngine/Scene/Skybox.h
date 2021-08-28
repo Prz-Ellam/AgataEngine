@@ -10,29 +10,33 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <memory>
 
-class Skybox {
-public:
-	Skybox(const std::string& right, const std::string& left, const std::string& top, const std::string& bottom,
-		const std::string& front, const std::string& back, float size);
-	// 6 textures morning
-	// 6 textures day
-	// 6 textures afternoon
-	// 6 textures night
-	// size
+namespace Agata {
 
-	virtual ~Skybox();
-	void draw(std::shared_ptr<Shader> shader, Light& light);
+	class Skybox {
+	public:
+		Skybox(const std::string& right, const std::string& left, const std::string& top, const std::string& bottom,
+			const std::string& front, const std::string& back, float size);
+		// 6 textures morning
+		// 6 textures day
+		// 6 textures afternoon
+		// 6 textures night
+		// size
 
-	float getRotation();
-	void setRotation(float rotation);
-	void updateRotation(float rotation);
+		virtual ~Skybox();
+		void draw(std::shared_ptr<Shader> shader, Light& light);
 
-private:
-	Mesh* m_Mesh;
-	Texture3D m_Texture;
-	// Texture3D m_Texture;
-	float m_Rotation;
-	float m_BlendFactor;
-};
+		float getRotation();
+		void setRotation(float rotation);
+		void updateRotation(float rotation);
+
+	private:
+		Mesh* m_Mesh;
+		Texture3D m_Texture;
+		// Texture3D m_Texture;
+		float m_Rotation;
+		float m_BlendFactor;
+	};
+
+}
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef WATER_H
-#define WATER_H
+#ifndef AGATA_WATER_H
+#define AGATA_WATER_H
 
 #include "Mesh.h"
 #include "Camera.h"
@@ -9,40 +9,44 @@
 #include "FrameBuffer.h"
 #include <memory>
 
-class Water {
-public:
-	Water();
-	Water(const glm::vec3& position, const glm::vec3& scale, const std::string& dudvMap, const std::string& normalMap, 
-		uint32_t width, uint32_t height);
-	~Water();
+namespace Agata {
 
-	glm::vec3& getPositionRef();
-	glm::vec3& getScaleRef();
+	class Water {
+	public:
+		Water();
+		Water(const glm::vec3& position, const glm::vec3& scale, const std::string& dudvMap, const std::string& normalMap,
+			uint32_t width, uint32_t height);
+		~Water();
 
-	void startReflection();
-	void endReflection();
+		glm::vec3& getPositionRef();
+		glm::vec3& getScaleRef();
 
-	void startRefraction();
-	void endRefraction();
+		void startReflection();
+		void endReflection();
 
-	float getHeight() const;
+		void startRefraction();
+		void endRefraction();
 
-	void draw(std::shared_ptr<Shader> shader, Light& light);
-private:
-	Mesh* m_Mesh;
-	glm::vec4 m_Colour;
-	Texture2D dudvMap;
-	Texture2D normalMap;
+		float getHeight() const;
 
-	FrameBuffer m_Refraction;
-	FrameBuffer m_Reflection;
+		void draw(std::shared_ptr<Shader> shader, Light& light);
+	private:
+		Mesh* m_Mesh;
+		glm::vec4 m_Colour;
+		Texture2D dudvMap;
+		Texture2D normalMap;
 
-	uint32_t m_Width, m_Height;
+		FrameBuffer m_Refraction;
+		FrameBuffer m_Reflection;
 
-	float moveFactor = 0.0f;
-	glm::vec3 m_Position;
-	glm::vec3 m_Scale;
-	glm::mat4 m_Transformation;
-};
+		uint32_t m_Width, m_Height;
+
+		float moveFactor = 0.0f;
+		glm::vec3 m_Position;
+		glm::vec3 m_Scale;
+		glm::mat4 m_Transformation;
+	};
+
+}
 
 #endif
