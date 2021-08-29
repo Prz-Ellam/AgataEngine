@@ -38,7 +38,7 @@ namespace Agata {
 
 	}
 
-	float Skybox::getRotation() {
+	float Skybox::getRotation() const {
 
 		return m_Rotation;
 

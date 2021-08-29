@@ -26,13 +26,15 @@ namespace Agata {
 		Texture2D blendMap;
 		glm::vec3 m_Ambient;
 		glm::vec3 m_Diffuse;
+
+		float m_GridSpacingX, m_GridSpacingZ;
+
 		std::vector<float> m_Heights;
 		float m_TilingFactor;
 		void generateTerrain(std::vector<Vertex3D>& vertices, std::vector<uint32_t>& indices,
 			uint32_t xSize, uint32_t zSize, const char* heightMap, int height);
 		float getHeight(int x, int z, int length, int width, int height, uint8_t* data);
 		glm::vec3 getNormals(int x, int y, int length, int width, int height, uint8_t* data);
-		float baryCentric(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec2 pos);
 	public:
 		Terrain(const std::string& textureRFilePath, const std::string& textureGFilePath, const std::string& textureBFilePath,
 			const std::string& textureBGFilePath,

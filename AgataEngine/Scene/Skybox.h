@@ -25,13 +25,13 @@ namespace Agata {
 		virtual ~Skybox();
 		void draw(std::shared_ptr<Shader> shader, Light& light);
 
-		float getRotation();
+		float getRotation() const;
 		void setRotation(float rotation);
 		void updateRotation(float rotation);
 
 	private:
-		Mesh* m_Mesh;
 		Texture3D m_Texture;
+		Mesh* m_Mesh;
 		// Texture3D m_Texture;
 		float m_Rotation;
 		float m_BlendFactor;

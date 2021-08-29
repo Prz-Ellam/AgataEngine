@@ -261,8 +261,16 @@
 //	ImGui::DestroyContext();
 //
 //}
+#include "Random.h"
 
 int main(int argc, char** argv) {
+
+	Agata::Random::init();
+
+	while (1) {
+		std::cout << Agata::Random::Float() << std::endl;
+		Sleep(1000);
+	}
 
 	Agata::Scene* scene = new Agata::Scene3D();
 	scene->run();

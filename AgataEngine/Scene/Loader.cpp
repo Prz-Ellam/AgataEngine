@@ -413,94 +413,123 @@ namespace Agata {
 
 		std::vector<Vertex3D> verticesAux;
 
-		verticesAux.resize(36);
+		//verticesAux.resize(36);
 
-		verticesAux[0].coords = glm::vec3(-0.5f, -0.5f, -0.5f);
-		verticesAux[1].coords = glm::vec3(0.5f, -0.5f, -0.5f);
-		verticesAux[2].coords = glm::vec3(0.5f, 0.5f, -0.5f);
-		verticesAux[3].coords = glm::vec3(0.5f, 0.5f, -0.5f);
-		verticesAux[4].coords = glm::vec3(-0.5f, 0.5f, -0.5f);
-		verticesAux[5].coords = glm::vec3(-0.5f, -0.5f, -0.5f);
+		//verticesAux[0].coords = glm::vec3(-0.5f, -0.5f, -0.5f);
+		//verticesAux[1].coords = glm::vec3(0.5f, -0.5f, -0.5f);
+		//verticesAux[2].coords = glm::vec3(0.5f, 0.5f, -0.5f);
+		//verticesAux[3].coords = glm::vec3(0.5f, 0.5f, -0.5f);
+		//verticesAux[4].coords = glm::vec3(-0.5f, 0.5f, -0.5f);
+		//verticesAux[5].coords = glm::vec3(-0.5f, -0.5f, -0.5f);
+		//
+		//verticesAux[6].coords = glm::vec3(-0.5f, -0.5f, 0.5f);
+		//verticesAux[7].coords = glm::vec3(0.5f, -0.5f, 0.5f);
+		//verticesAux[8].coords = glm::vec3(0.5f, 0.5f, 0.5f);
+		//verticesAux[9].coords = glm::vec3(0.5f, 0.5f, 0.5f);
+		//verticesAux[10].coords = glm::vec3(-0.5f, 0.5f, 0.5f);
+		//verticesAux[11].coords = glm::vec3(-0.5f, -0.5f, 0.5f);
+		//
+		//verticesAux[12].coords = glm::vec3(-0.5f, 0.5f, 0.5f);
+		//verticesAux[13].coords = glm::vec3(-0.5f, 0.5f, -0.5f);
+		//verticesAux[14].coords = glm::vec3(-0.5f, -0.5f, -0.5f);
+		//verticesAux[15].coords = glm::vec3(-0.5f, -0.5f, -0.5f);
+		//verticesAux[16].coords = glm::vec3(-0.5f, -0.5f, 0.5f);
+		//verticesAux[17].coords = glm::vec3(-0.5f, 0.5f, 0.5f);
+		//
+		//verticesAux[18].coords = glm::vec3(0.5f, 0.5f, 0.5f);
+		//verticesAux[19].coords = glm::vec3(0.5f, 0.5f, -0.5f);
+		//verticesAux[20].coords = glm::vec3(0.5f, -0.5f, -0.5f);
+		//verticesAux[21].coords = glm::vec3(0.5f, -0.5f, -0.5f);
+		//verticesAux[22].coords = glm::vec3(0.5f, -0.5f, 0.5f);
+		//verticesAux[23].coords = glm::vec3(0.5f, 0.5f, 0.5f);
+		//
+		//verticesAux[24].coords = glm::vec3(-0.5f, -0.5f, -0.5f);
+		//verticesAux[25].coords = glm::vec3(0.5f, -0.5f, -0.5f);
+		//verticesAux[26].coords = glm::vec3(0.5f, -0.5f, 0.5f);
+		//verticesAux[27].coords = glm::vec3(0.5f, -0.5f, 0.5f);
+		//verticesAux[28].coords = glm::vec3(-0.5f, -0.5f, 0.5f);
+		//verticesAux[29].coords = glm::vec3(-0.5f, -0.5f, -0.5f);
+		//
+		//verticesAux[30].coords = glm::vec3(-0.5f, 0.5f, -0.5f);
+		//verticesAux[31].coords = glm::vec3(0.5f, 0.5f, -0.5f);
+		//verticesAux[32].coords = glm::vec3(0.5f, 0.5f, 0.5f);
+		//verticesAux[33].coords = glm::vec3(0.5f, 0.5f, 0.5f);
+		//verticesAux[34].coords = glm::vec3(-0.5f, 0.5f, 0.5f);
+		//verticesAux[35].coords = glm::vec3(-0.5f, 0.5f, -0.5f);
+		//
+		//verticesAux[0].uv = glm::vec2(0.0f, 0.0f);
+		//verticesAux[1].uv = glm::vec2(1.0f, 0.0f);
+		//verticesAux[2].uv = glm::vec2(1.0f, 1.0f);
+		//verticesAux[3].uv = glm::vec2(1.0f, 1.0f);
+		//verticesAux[4].uv = glm::vec2(0.0f, 1.0f);
+		//verticesAux[5].uv = glm::vec2(0.0f, 0.0f);
+		//
+		//verticesAux[6].uv = glm::vec2(0.0f, 0.0f);
+		//verticesAux[7].uv = glm::vec2(1.0f, 0.0f);
+		//verticesAux[8].uv = glm::vec2(1.0f, 1.0f);
+		//verticesAux[9].uv = glm::vec2(1.0f, 1.0f);
+		//verticesAux[10].uv = glm::vec2(0.0f, 1.0f);
+		//verticesAux[11].uv = glm::vec2(0.0f, 0.0f);
+		//
+		//verticesAux[12].uv = glm::vec2(1.0f, 0.0f);
+		//verticesAux[13].uv = glm::vec2(1.0f, 1.0f);
+		//verticesAux[14].uv = glm::vec2(0.0f, 1.0f);
+		//verticesAux[15].uv = glm::vec2(0.0f, 1.0f);
+		//verticesAux[16].uv = glm::vec2(0.0f, 0.0f);
+		//verticesAux[17].uv = glm::vec2(1.0f, 0.0f);
+		//
+		//verticesAux[18].uv = glm::vec2(1.0f, 0.0f);
+		//verticesAux[19].uv = glm::vec2(1.0f, 1.0f);
+		//verticesAux[20].uv = glm::vec2(0.0f, 1.0f);
+		//verticesAux[21].uv = glm::vec2(0.0f, 1.0f);
+		//verticesAux[22].uv = glm::vec2(0.0f, 0.0f);
+		//verticesAux[23].uv = glm::vec2(1.0f, 0.0f);
+		//
+		//verticesAux[24].uv = glm::vec2(0.0f, 1.0f);
+		//verticesAux[25].uv = glm::vec2(1.0f, 1.0f);
+		//verticesAux[26].uv = glm::vec2(1.0f, 0.0f);
+		//verticesAux[27].uv = glm::vec2(1.0f, 0.0f);
+		//verticesAux[28].uv = glm::vec2(0.0f, 0.0f);
+		//verticesAux[29].uv = glm::vec2(0.0f, 1.0f);
+		//
+		//verticesAux[30].uv = glm::vec2(0.0f, 1.0f);
+		//verticesAux[31].uv = glm::vec2(1.0f, 1.0f);
+		//verticesAux[32].uv = glm::vec2(1.0f, 0.0f);
+		//verticesAux[33].uv = glm::vec2(1.0f, 0.0f);
+		//verticesAux[34].uv = glm::vec2(0.0f, 0.0f);
+		//verticesAux[35].uv = glm::vec2(0.0f, 1.0f);
+		//
+		//std::vector<uint32_t> indexCube = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+		//										17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35 };
+		//
 
-		verticesAux[6].coords = glm::vec3(-0.5f, -0.5f, 0.5f);
-		verticesAux[7].coords = glm::vec3(0.5f, -0.5f, 0.5f);
-		verticesAux[8].coords = glm::vec3(0.5f, 0.5f, 0.5f);
-		verticesAux[9].coords = glm::vec3(0.5f, 0.5f, 0.5f);
-		verticesAux[10].coords = glm::vec3(-0.5f, 0.5f, 0.5f);
-		verticesAux[11].coords = glm::vec3(-0.5f, -0.5f, 0.5f);
+		verticesAux.resize(8);
+		verticesAux[0].coords = glm::vec3(-1.0f, 1.0f, 0.0f);
+		verticesAux[1].coords = glm::vec3(-1.0f, -1.0f, 0.0f);
+		verticesAux[2].coords = glm::vec3(1.0f, 1.0f, 0.0f);
+		verticesAux[3].coords = glm::vec3(1.0f, -1.0f, 0.0f);
+		verticesAux[4].coords = glm::vec3(-1.0f, 1.0f, -1.0f);
+		verticesAux[5].coords = glm::vec3(-1.0f, -1.0f, -1.0f);
+		verticesAux[6].coords = glm::vec3(1.0f, 1.0f, -1.0f);
+		verticesAux[7].coords = glm::vec3(1.0f, -1.0f, -1.0f);
 
-		verticesAux[12].coords = glm::vec3(-0.5f, 0.5f, 0.5f);
-		verticesAux[13].coords = glm::vec3(-0.5f, 0.5f, -0.5f);
-		verticesAux[14].coords = glm::vec3(-0.5f, -0.5f, -0.5f);
-		verticesAux[15].coords = glm::vec3(-0.5f, -0.5f, -0.5f);
-		verticesAux[16].coords = glm::vec3(-0.5f, -0.5f, 0.5f);
-		verticesAux[17].coords = glm::vec3(-0.5f, 0.5f, 0.5f);
-
-		verticesAux[18].coords = glm::vec3(0.5f, 0.5f, 0.5f);
-		verticesAux[19].coords = glm::vec3(0.5f, 0.5f, -0.5f);
-		verticesAux[20].coords = glm::vec3(0.5f, -0.5f, -0.5f);
-		verticesAux[21].coords = glm::vec3(0.5f, -0.5f, -0.5f);
-		verticesAux[22].coords = glm::vec3(0.5f, -0.5f, 0.5f);
-		verticesAux[23].coords = glm::vec3(0.5f, 0.5f, 0.5f);
-
-		verticesAux[24].coords = glm::vec3(-0.5f, -0.5f, -0.5f);
-		verticesAux[25].coords = glm::vec3(0.5f, -0.5f, -0.5f);
-		verticesAux[26].coords = glm::vec3(0.5f, -0.5f, 0.5f);
-		verticesAux[27].coords = glm::vec3(0.5f, -0.5f, 0.5f);
-		verticesAux[28].coords = glm::vec3(-0.5f, -0.5f, 0.5f);
-		verticesAux[29].coords = glm::vec3(-0.5f, -0.5f, -0.5f);
-
-		verticesAux[30].coords = glm::vec3(-0.5f, 0.5f, -0.5f);
-		verticesAux[31].coords = glm::vec3(0.5f, 0.5f, -0.5f);
-		verticesAux[32].coords = glm::vec3(0.5f, 0.5f, 0.5f);
-		verticesAux[33].coords = glm::vec3(0.5f, 0.5f, 0.5f);
-		verticesAux[34].coords = glm::vec3(-0.5f, 0.5f, 0.5f);
-		verticesAux[35].coords = glm::vec3(-0.5f, 0.5f, -0.5f);
-
-		verticesAux[0].uv = glm::vec2(0.0f, 0.0f);
-		verticesAux[1].uv = glm::vec2(1.0f, 0.0f);
+		verticesAux[0].uv = glm::vec2(0.0f, 1.0f);
+		verticesAux[1].uv = glm::vec2(0.0f, 0.0f);
 		verticesAux[2].uv = glm::vec2(1.0f, 1.0f);
-		verticesAux[3].uv = glm::vec2(1.0f, 1.0f);
+		verticesAux[3].uv = glm::vec2(1.0f, 0.0f);
 		verticesAux[4].uv = glm::vec2(0.0f, 1.0f);
 		verticesAux[5].uv = glm::vec2(0.0f, 0.0f);
-
-		verticesAux[6].uv = glm::vec2(0.0f, 0.0f);
+		verticesAux[6].uv = glm::vec2(1.0f, 1.0f);
 		verticesAux[7].uv = glm::vec2(1.0f, 0.0f);
-		verticesAux[8].uv = glm::vec2(1.0f, 1.0f);
-		verticesAux[9].uv = glm::vec2(1.0f, 1.0f);
-		verticesAux[10].uv = glm::vec2(0.0f, 1.0f);
-		verticesAux[11].uv = glm::vec2(0.0f, 0.0f);
-
-		verticesAux[12].uv = glm::vec2(1.0f, 0.0f);
-		verticesAux[13].uv = glm::vec2(1.0f, 1.0f);
-		verticesAux[14].uv = glm::vec2(0.0f, 1.0f);
-		verticesAux[15].uv = glm::vec2(0.0f, 1.0f);
-		verticesAux[16].uv = glm::vec2(0.0f, 0.0f);
-		verticesAux[17].uv = glm::vec2(1.0f, 0.0f);
-
-		verticesAux[18].uv = glm::vec2(1.0f, 0.0f);
-		verticesAux[19].uv = glm::vec2(1.0f, 1.0f);
-		verticesAux[20].uv = glm::vec2(0.0f, 1.0f);
-		verticesAux[21].uv = glm::vec2(0.0f, 1.0f);
-		verticesAux[22].uv = glm::vec2(0.0f, 0.0f);
-		verticesAux[23].uv = glm::vec2(1.0f, 0.0f);
-
-		verticesAux[24].uv = glm::vec2(0.0f, 1.0f);
-		verticesAux[25].uv = glm::vec2(1.0f, 1.0f);
-		verticesAux[26].uv = glm::vec2(1.0f, 0.0f);
-		verticesAux[27].uv = glm::vec2(1.0f, 0.0f);
-		verticesAux[28].uv = glm::vec2(0.0f, 0.0f);
-		verticesAux[29].uv = glm::vec2(0.0f, 1.0f);
-
-		verticesAux[30].uv = glm::vec2(0.0f, 1.0f);
-		verticesAux[31].uv = glm::vec2(1.0f, 1.0f);
-		verticesAux[32].uv = glm::vec2(1.0f, 0.0f);
-		verticesAux[33].uv = glm::vec2(1.0f, 0.0f);
-		verticesAux[34].uv = glm::vec2(0.0f, 0.0f);
-		verticesAux[35].uv = glm::vec2(0.0f, 1.0f);
-
-		std::vector<uint32_t> indexCube = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-												17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35 };
+		
+		std::vector<uint32_t> indexCube = {
+		  0, 2, 3, 1,
+		  2, 6, 7, 3,
+		  6, 4, 5, 7,
+		  4, 0, 1, 5,
+		  0, 4, 6, 2,
+		  1, 5, 7, 3
+		};
 
 
 		vertices = verticesAux;
@@ -522,18 +551,8 @@ namespace Agata {
 		verticesAux[7] = glm::vec3(-size, size, -size);
 
 		std::vector<uint32_t> indicesAux(36);
-		indicesAux = { 1, 2, 6,
-						6, 5, 1,
-						0, 4, 7,
-						7, 3, 0,
-						4, 5, 6,
-						6, 7, 4,
-						0, 3, 2,
-						2, 1, 0,
-						0, 1, 5,
-						5, 4, 0,
-						3, 7, 6,
-						6, 2, 3 };
+		indicesAux = { 1, 2, 6, 6, 5, 1, 0, 4, 7, 7, 3, 0, 4, 5, 6, 6, 7, 4, 
+						0, 3, 2, 2, 1, 0, 0, 1, 5, 5, 4, 0, 3, 7, 6, 6, 2, 3 };
 
 		return { verticesAux, indicesAux };
 

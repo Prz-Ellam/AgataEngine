@@ -2,7 +2,8 @@
 #include <GL/glew.h>
 #include <stb/stb_image.h>
 #include "Renderer.h"
-#include <iostream>
+#include "glmUtils.h"
+#include "Profiler.h"
 
 namespace Agata {
 
@@ -48,12 +49,12 @@ namespace Agata {
 		bool defaultHeightMap = false;
 		int length, width, bpp;
 		stbi_set_flip_vertically_on_load(true);
-		unsigned char* buffer = stbi_load(heightMap, &length, &width, &bpp, 1);
+		uint8_t* buffer = stbi_load(heightMap, &length, &width, &bpp, 1);
 
 		if (!buffer) {
-			buffer = new uint8_t[128 * 128];
-			memset(buffer, 0, 128 * 128);
-			length = width = 128;
+			buffer = new uint8_t;
+			*buffer = 0;
+			length = width = 1;
 			defaultHeightMap = true;
 		}
 
@@ -61,24 +62,29 @@ namespace Agata {
 		std::vector<uint32_t> indicesAux;
 		uint32_t count = length * width;
 
+		m_GridSpacingX = xSize / ((float)length - 1);
+		m_GridSpacingZ = zSize / ((float)width - 1);
+
 		verticesAux.resize(count);
 		indicesAux.resize(6 * (length - 1) * (width - 1));
 		m_Heights.resize(count);
 
-		int it = 0;
-		for (int z = 0; z < width; z++) {
+		// Load coordinates, normals and texture coordinates
+		for (int i = 0, z = 0; z < width; z++) {
 			for (int x = 0; x < length; x++) {
-				verticesAux[it].coords.x = (float)x / ((float)(length - 1)) * xSize;
-				verticesAux[it].coords.y = getHeight(x, z, length, width, height, buffer);
-				m_Heights[it] = verticesAux[it].coords.y;
-				verticesAux[it].coords.z = (float)z / ((float)(width - 1)) * zSize;
 
-				verticesAux[it].normals = getNormals(x, z, length, width, height, buffer);
+				verticesAux[i].coords.x = x * m_GridSpacingX;
+				verticesAux[i].coords.z = z * m_GridSpacingZ;
 
-				verticesAux[it].uv.x = (float)x / ((float)(length - 1));
-				verticesAux[it].uv.y = (float)z / ((float)(width - 1));
+				verticesAux[i].coords.y = getHeight(x, z, length, width, height, buffer);
+				m_Heights[i] = verticesAux[i].coords.y;
+				
+				verticesAux[i].normals = getNormals(x, z, length, width, height, buffer);
 
-				it++;
+				verticesAux[i].uv.x = (float)x / (float)(length - 1);
+				verticesAux[i].uv.y = (float)z / (float)(width - 1);
+
+				i++;
 			}
 		}
 
@@ -86,41 +92,41 @@ namespace Agata {
 		for (int z = 0; z < width - 1; z++) {
 			for (int x = 0; x < length - 1; x++) {
 
-				int index0 = z * width + x;
-				int index1 = (z + 1) * width + x;
-				int index2 = z * width + (x + 1);
+				int i0 = z * width + x;
+				int i1 = (z + 1) * width + x;
+				int i2 = z * width + (x + 1);
 
-				auto deltaPos1 = verticesAux[index1].coords - verticesAux[index0].coords;
-				auto deltaPos2 = verticesAux[index2].coords - verticesAux[index0].coords;
+				glm::vec3 deltaPos1 = verticesAux[i1].coords - verticesAux[i0].coords;
+				glm::vec3 deltaPos2 = verticesAux[i2].coords - verticesAux[i0].coords;
 
-				auto deltaUV1 = verticesAux[index1].uv - verticesAux[index0].uv;
-				auto deltaUV2 = verticesAux[index2].uv - verticesAux[index0].uv;
+				glm::vec2 deltaUV1 = verticesAux[i1].uv - verticesAux[i0].uv;
+				glm::vec2 deltaUV2 = verticesAux[i2].uv - verticesAux[i0].uv;
 
 				float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
 
-				auto tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) * r;
-				auto bitangent = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x) * r;
+				glm::vec3 tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) * r;
+				glm::vec3 bitangent = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x) * r;
 
-				verticesAux[index0].tangents = tangent;
-				verticesAux[index1].tangents = tangent;
-				verticesAux[index2].tangents = tangent;
+				verticesAux[i0].tangents = tangent;
+				verticesAux[i1].tangents = tangent;
+				verticesAux[i2].tangents = tangent;
 
-				verticesAux[index0].bitangents = bitangent;
-				verticesAux[index1].bitangents = bitangent;
-				verticesAux[index2].bitangents = bitangent;
+				verticesAux[i0].bitangents = bitangent;
+				verticesAux[i1].bitangents = bitangent;
+				verticesAux[i2].bitangents = bitangent;
 
 			}
 		}
 
-		int indice = 0;
-		for (int z = 0; z < width - 1; z++) {
+		// Load indices
+		for (int i = 0, z = 0; z < width - 1; z++) {
 			for (int x = 0; x < length - 1; x++) {
-				indicesAux[indice++] = z * width + x; // Top Left
-				indicesAux[indice++] = (z + 1) * width + x; // Bottom Left
-				indicesAux[indice++] = z * width + x + 1; // Top Right
-				indicesAux[indice++] = z * width + x + 1; // Top Right
-				indicesAux[indice++] = (z + 1) * width + x; // Bottom Left
-				indicesAux[indice++] = (z + 1) * width + x + 1; // Bottom Right
+				indicesAux[i++] = z * width + x;			// Top Left
+				indicesAux[i++] = (z + 1) * width + x;		// Bottom Left
+				indicesAux[i++] = z * width + x + 1;		// Top Right
+				indicesAux[i++] = z * width + x + 1;		// Top Right
+				indicesAux[i++] = (z + 1) * width + x;		// Bottom Left
+				indicesAux[i++] = (z + 1) * width + x + 1;	// Bottom Right
 			}
 		}
 
@@ -141,7 +147,7 @@ namespace Agata {
 		}
 
 		float result = data[x + z * width];
-		result /= 255;
+		result /= 255.0f;
 		result *= height;
 		return result;
 
@@ -187,41 +193,33 @@ namespace Agata {
 
 	float Terrain::getHeight(float x, float z) {
 
-		float gridQuadSize = 20.0f / ((float)glm::sqrt(m_Heights.size()) - 1); // <- Hardcoding value !!!
-		int gridX = ((int)(x / gridQuadSize)) + 1;
-		int gridZ = ((int)(z / gridQuadSize)) + 1;
+		//Agata::Profiler e(__FUNCTION__);
 
-		if (gridX < 0 || gridZ < 0 || gridX > glm::sqrt(m_Heights.size()) - 1 || gridZ > glm::sqrt(m_Heights.size()) - 1)
-			return 0;
+		int gridX = ((int)(x / m_GridSpacingX)) + 1;
+		int gridZ = ((int)(z / m_GridSpacingZ)) + 1;
 
-		float xCoord = (x / gridQuadSize + 1) - gridX;
-		float zCoord = (z / gridQuadSize + 1) - gridZ;
+		if (gridX < 0 || gridZ < 0 || gridX > glm::sqrt(m_Heights.size()) - 1 || gridZ > glm::sqrt(m_Heights.size()) - 1) {
+			return 0.0f;
+		}
+
+		float xCoord = (x / m_GridSpacingX + 1) - gridX;
+		float zCoord = (z / m_GridSpacingZ + 1) - gridZ;
 
 		float height;
 		if (xCoord <= (1 - zCoord)) {
-			height = baryCentric(glm::vec3(0, m_Heights[gridX + gridZ * 128], 0),
-				glm::vec3(1, m_Heights[(gridX + 1) + gridZ * 128], 0),
-				glm::vec3(0, m_Heights[gridX + (gridZ + 1) * 128], 1),
-				glm::vec2(xCoord, zCoord));    // <- Hardcoding value
+			height = baryCentricCoordinatesY(glm::vec3(0, m_Heights[gridX + gridZ * 128], 0), // !!! Hardcode value
+											glm::vec3(1, m_Heights[(gridX + 1) + gridZ * 128], 0),
+											glm::vec3(0, m_Heights[gridX + (gridZ + 1) * 128], 1),
+											glm::vec2(xCoord, zCoord));
 		}
 		else {
-			height = baryCentric(glm::vec3(1, m_Heights[(gridX + 1) + gridZ * 128], 0),
-				glm::vec3(1, m_Heights[(gridX + 1) + (gridZ + 1) * 128], 1),
-				glm::vec3(0, m_Heights[gridX + (gridZ + 1) * 128], 1),
-				glm::vec2(xCoord, zCoord));    // <- Hardcoding value
+			height = baryCentricCoordinatesY(glm::vec3(1, m_Heights[(gridX + 1) + gridZ * 128], 0),
+											glm::vec3(1, m_Heights[(gridX + 1) + (gridZ + 1) * 128], 1),
+											glm::vec3(0, m_Heights[gridX + (gridZ + 1) * 128], 1),
+											glm::vec2(xCoord, zCoord));
 		}
 
 		return height;
-
-	}
-
-	float Terrain::baryCentric(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec2 pos) {
-
-		float det = (p2.z - p3.z) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.z - p3.z);
-		float l1 = ((p2.z - p3.z) * (pos.x - p3.x) + (p3.x - p2.x) * (pos.y - p3.z)) / det;
-		float l2 = ((p3.z - p1.z) * (pos.x - p3.x) + (p1.x - p3.x) * (pos.y - p3.z)) / det;
-		float l3 = 1.0f - l1 - l2;
-		return l1 * p1.y + l2 * p2.y + l3 * p3.y;
 
 	}
 

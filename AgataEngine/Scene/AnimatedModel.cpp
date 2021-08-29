@@ -3,6 +3,7 @@
 #include "Loader.h"
 #include "Log.h"
 #include "glmUtils.h"
+#include <bitset>
 
 namespace Agata {
 
@@ -127,7 +128,7 @@ namespace Agata {
 
 	}
 
-	Mesh AnimatedModel::processMesh(aiMesh* mesh, const aiScene* scene, std::vector<AnimVertex>& vertices, std::vector<uint32_t>& indices) {
+	void AnimatedModel::processMesh(aiMesh* mesh, const aiScene* scene, std::vector<AnimVertex>& vertices, std::vector<uint32_t>& indices) {
 
 		vertices = {};
 		indices = {};
@@ -198,7 +199,6 @@ namespace Agata {
 
 				glm::mat4 offsetMatrix = assimpToGlmMatrix(joint->mOffsetMatrix);
 				jointTransformations.push_back(std::make_pair(offsetMatrix, glm::mat4(1.0f)));
-				jointTransformations[jointIndex].first = assimpToGlmMatrix(joint->mOffsetMatrix);
 
 				jointInfo[jointName] = jointIndex;
 
@@ -220,8 +220,6 @@ namespace Agata {
 			}
 		}
 
-		return Mesh(vertices, indices);
-
 	}
 
 	void AnimatedModel::loadJointsTransforms(float timeStamp, std::vector<glm::mat4>& transformations) {
@@ -230,9 +228,10 @@ namespace Agata {
 		float animationTime = fmod(timeTicks, scene->mAnimations[0]->mDuration);
 		findTransformations(animationTime, scene->mRootNode);
 
+		transformations.clear();
 		transformations.resize(m_JointCount);
 		for (uint32_t i = 0; i < m_JointCount; i++) {
-			transformations[i] = jointTransformations[i].second;
+			transformations[i] = jointTransformations[i].second;  // first is offset, seconds is all transformation
 		}
 
 	}
@@ -250,10 +249,7 @@ namespace Agata {
 			glm::vec3 lerpPos = lerpPosition(timeStamp, nodeAnim);
 			glm::quat lerpRot = lerpRotation(timeStamp, nodeAnim);
 			glm::vec3 lerpSca = lerpScale(timeStamp, nodeAnim);
-
-			nodeTransform = glm::translate(glm::mat4(1.0f), lerpPos);
-			nodeTransform = nodeTransform * glm::mat4_cast(lerpRot);
-			nodeTransform = glm::scale(nodeTransform, lerpSca);
+			nodeTransform = transformationMatrix(lerpPos, lerpRot, lerpSca);
 
 		}
 
@@ -311,8 +307,8 @@ namespace Agata {
 		}
 
 		nextPosition = positionIndex + 1;
-		float dt = node->mRotationKeys[nextPosition].mTime - node->mRotationKeys[positionIndex].mTime;
-		float factor = (animationTime - node->mRotationKeys[positionIndex].mTime) / dt;
+		float dt = (float)(node->mRotationKeys[nextPosition].mTime - node->mRotationKeys[positionIndex].mTime);
+		float factor = (animationTime - (float)node->mRotationKeys[positionIndex].mTime) / dt;
 		glm::quat start = assimpToGlmQuat(node->mRotationKeys[positionIndex].mValue);
 		glm::quat end = assimpToGlmQuat(node->mRotationKeys[nextPosition].mValue);
 
@@ -321,21 +317,19 @@ namespace Agata {
 
 		glm::quat result;
 		float dot = start.x * end.x + start.y * end.y + start.z * end.z + start.w * end.w;
-		float one_minus_blend = 1.0f - factor;
+		float oneMinusFactor = 1.0f - factor;
 
-		if (dot < 0.0f)
-		{
-			result.x = start.x * one_minus_blend + factor * -end.x;
-			result.y = start.y * one_minus_blend + factor * -end.y;
-			result.z = start.z * one_minus_blend + factor * -end.z;
-			result.w = start.w * one_minus_blend + factor * -end.w;
+		if (dot < 0.0f) {
+			result.x = oneMinusFactor * start.x + factor * -end.x;
+			result.y = oneMinusFactor * start.y + factor * -end.y;
+			result.z = oneMinusFactor * start.z + factor * -end.z;
+			result.w = oneMinusFactor * start.w + factor * -end.w;
 		}
-		else
-		{
-			result.x = start.x * one_minus_blend + factor * end.x;
-			result.y = start.y * one_minus_blend + factor * end.y;
-			result.z = start.z * one_minus_blend + factor * end.z;
-			result.w = start.w * one_minus_blend + factor * end.w;
+		else {
+			result.x = oneMinusFactor * start.x + factor * end.x;
+			result.y = oneMinusFactor * start.y + factor * end.y;
+			result.z = oneMinusFactor * start.z + factor * end.z;
+			result.w = oneMinusFactor * start.w + factor * end.w;
 		}
 
 		return glm::normalize(result);

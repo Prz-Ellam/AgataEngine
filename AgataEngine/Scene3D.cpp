@@ -4,10 +4,10 @@
 #include "Loader.h"
 #include "Timer.h"
 #include <Windows.h>
+#include "Random.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
-#include <ctime>
 
 namespace Agata {
 
@@ -27,7 +27,7 @@ namespace Agata {
 
 	void Scene3D::init() {
 
-		srand(time(nullptr));
+		Agata::Random::init();
 
 		m_Window = new Window(1280, 720, "Agata Engine"s);
 		m_Window->setVSync(true);
