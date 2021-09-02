@@ -13,6 +13,7 @@
 #include "Light.h"
 #include "ImGuiLayer.h"
 #include "Zoom.h"
+#include "Fire.h"
 #include <memory>
 
 namespace Agata {
@@ -40,11 +41,13 @@ namespace Agata {
 		Terrain* terrain;
 		Skybox* skybox;
 		Billboard* billboard;
+		Fire* fire;
 		Zoom* spyGlassZoom;
 		std::shared_ptr<Shader> shaderModel;
 		std::shared_ptr<Shader> shaderTerrain;
 		std::shared_ptr<Shader> shaderSkybox;
 		std::shared_ptr<Shader> shaderBill;
+		std::shared_ptr<Shader> shaderFire;
 		std::shared_ptr<Shader> shaderWater;
 		std::shared_ptr<Shader> shaderZoom;
 		//std::shared_ptr<Shader> shaderFire;

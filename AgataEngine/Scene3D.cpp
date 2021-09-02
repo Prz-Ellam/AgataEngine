@@ -50,8 +50,7 @@ namespace Agata {
 		imGui = new ImGuiLayer(m_Window);
 		imGui->attachDrawHandler(EVENT_FN(Scene3D::imGuiEvent));
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		m_Renderer.enableBlend();
 		glEnable(GL_DEPTH_TEST);
 
 		m_Renderer.backCullface();
@@ -109,7 +108,10 @@ namespace Agata {
 			skybox = new Skybox("Assets//Images//right.png", "Assets//Images//left.png", "Assets//Images//top.png",
 				"Assets//Images//bottom.png", "Assets//Images//front.png", "Assets//Images//back.png", 500.0f);
 		}
-		billboard = new Billboard("Assets\\fireNoise.png"s, glm::vec3(11.302f, 2.518f, 12.408f), glm::vec3(1.0f));
+		//billboard = new Billboard("Assets\\fireNoise.png"s, glm::vec3(11.302f, 2.518f, 12.408f), glm::vec3(1.0f));
+
+		fire = new Fire("Assets\\rampFire.gif"s, "Assets\\alphaFire.gif"s, "Assets\\dudv.png"s, "Assets\\fireNoise.png"s, 
+			glm::vec3(11.302f, 2.518f, 12.408f), glm::vec3(1.0f));
 
 		spyGlassZoom = new Zoom("Assets\\zoom.jpg"s);
 
@@ -119,6 +121,7 @@ namespace Agata {
 			shaderTerrain = std::make_shared<Shader>("Assets//Shaders//TerrainVertex.glsl", "Assets//Shaders//TerrainFragment.glsl");
 			shaderSkybox = std::make_shared<Shader>("Assets//Shaders//SkyBoxVertex.glsl", "Assets//Shaders//SkyBoxFragment.glsl");
 			shaderBill = std::make_shared<Shader>("Assets//Shaders//FireVertex.glsl", "Assets//Shaders//FireFragment.glsl");
+			shaderFire = std::make_shared<Shader>("Assets//Shaders//FireVertex.glsl", "Assets//Shaders//FireFragment.glsl");
 			shaderWater = std::make_shared<Shader>("Assets//Shaders//WaterVertex.glsl", "Assets//Shaders//WaterFragment.glsl");
 			shaderZoom = std::make_shared<Shader>("Assets//Shaders//ZoomVertex.glsl", "Assets//Shaders//ZoomFragment.glsl");
 		}
@@ -140,7 +143,8 @@ namespace Agata {
 		delete animatedModel;
 		delete terrain;
 		delete skybox;
-		delete billboard;
+		//delete billboard;
+		delete fire;
 		delete water;
 		delete light;
 		delete m_Camera;
@@ -228,7 +232,8 @@ namespace Agata {
 			//animatedModel->draw(shaderModel, *light, ts, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 			terrain->draw(shaderTerrain, *light, glm::vec4(0.0f, 1.0f, 0.0f, -water->getHeight()));
 			skybox->draw(shaderSkybox, *light);
-			billboard->draw(shaderBill, *light);
+			//billboard->draw(shaderBill, *light);
+			fire->draw(shaderFire, dt);
 			water->endReflection();
 			m_Renderer.endScene();
 
@@ -240,7 +245,8 @@ namespace Agata {
 			//animatedModel->draw(shaderModel, *light, ts, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 			terrain->draw(shaderTerrain, *light, glm::vec4(0.0f, -1.0f, 0.0f, water->getHeight()));
 			skybox->draw(shaderSkybox, *light);
-			billboard->draw(shaderBill, *light);
+			//billboard->draw(shaderBill, *light);
+			fire->draw(shaderFire, dt);
 			water->endRefraction();
 			m_Renderer.endScene();
 
@@ -252,7 +258,8 @@ namespace Agata {
 			skybox->draw(shaderSkybox, *light);
 			terrain->draw(shaderTerrain, *light);
 			animatedModel->draw(shaderModel, *light, ts);
-			billboard->draw(shaderBill, *light);
+			//billboard->draw(shaderBill, *light);
+			fire->draw(shaderFire, dt);
 
 			water->draw(shaderWater, *light);
 
@@ -306,7 +313,7 @@ namespace Agata {
 			m_Running = false;
 		}
 
-		if (e.getKeyCode() == GLFW_KEY_P && e.getAction() == GLFW_PRESS) {
+		if (e.getKeyCode() == GLFW_KEY_P && e.getAction() == GLFW_PRESS) { // Abstract this pls, no GLFW in Scene Class
 			if (glfwGetInputMode(m_Window->getHandler(), GLFW_CURSOR) == GLFW_CURSOR_NORMAL) {
 				glfwSetInputMode(m_Window->getHandler(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 			}
@@ -332,18 +339,18 @@ namespace Agata {
 		//ImGui::SliderFloat3("Water Scale:", &water->getScaleRef()[0], -20, 20);
 		//ImGui::SliderFloat("Tiling Factor:", &terrain->getTilingFactorRef(), 0.0f, 100.0f);
 		//ImGui::SliderFloat("Fall Velocity: ", &m_Camera->getUpVelocityRef(), 0.0f, 0.0f);
-		ImGui::PushID(0);
-		ImGui::SliderFloat4("Matriz: ", glm::value_ptr(joint), -1.0f, 1.0f);
-		ImGui::PopID();
-		ImGui::PushID(1);
-		ImGui::SliderFloat4("Matriz: ", glm::value_ptr(joint) + 4, -1.0f, 1.0f);
-		ImGui::PopID();
-		ImGui::PushID(2);
-		ImGui::SliderFloat4("Matriz: ", glm::value_ptr(joint) + 8, -1.0f, 1.0f);
-		ImGui::PopID();
-		ImGui::PushID(3);
-		ImGui::SliderFloat4("Matriz: ", glm::value_ptr(joint) + 12, -1.0f, 1.0f);
-		ImGui::PopID();
+		//ImGui::PushID(0);
+		//ImGui::SliderFloat4("Matriz: ", glm::value_ptr(joint), -1.0f, 1.0f);
+		//ImGui::PopID();
+		//ImGui::PushID(1);
+		//ImGui::SliderFloat4("Matriz: ", glm::value_ptr(joint) + 4, -1.0f, 1.0f);
+		//ImGui::PopID();
+		//ImGui::PushID(2);
+		//ImGui::SliderFloat4("Matriz: ", glm::value_ptr(joint) + 8, -1.0f, 1.0f);
+		//ImGui::PopID();
+		//ImGui::PushID(3);
+		//ImGui::SliderFloat4("Matriz: ", glm::value_ptr(joint) + 12, -1.0f, 1.0f);
+		//ImGui::PopID();
 		ImGui::End();
 
 	}

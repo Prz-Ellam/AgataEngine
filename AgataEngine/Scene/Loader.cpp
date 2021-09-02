@@ -198,9 +198,9 @@ namespace Agata {
 				vertPosIndices.push_back(vertexIndex[0]);
 				vertPosIndices.push_back(vertexIndex[1]);
 				vertPosIndices.push_back(vertexIndex[2]);
-				uvIndices    .push_back(uvIndex[0]);
-				uvIndices    .push_back(uvIndex[1]);
-				uvIndices    .push_back(uvIndex[2]);
+				uvIndices.push_back(uvIndex[0]);
+				uvIndices.push_back(uvIndex[1]);
+				uvIndices.push_back(uvIndex[2]);
 				normIndices.push_back(normalIndex[0]);
 				normIndices.push_back(normalIndex[1]);
 				normIndices.push_back(normalIndex[2]);

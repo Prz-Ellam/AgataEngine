@@ -160,12 +160,7 @@ namespace Agata {
 		yoffset *= sensitivity;
 
 		m_Yaw += xoffset;
-		m_Pitch += yoffset * m_PitchDirection;
-
-		if (m_Pitch > 89.0f)
-			m_Pitch = 89.0f;
-		if (m_Pitch < -89.0f)
-			m_Pitch = -89.0f;
+		m_Pitch += glm::clamp(yoffset * m_PitchDirection, -89.0f, 89.0f);
 
 		glm::vec3 direction;
 		direction.x = glm::cos(glm::radians(m_Yaw)) * glm::cos(glm::radians(m_Pitch));

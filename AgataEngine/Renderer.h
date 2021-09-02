@@ -22,6 +22,7 @@ namespace Agata {
 		void backCullface();
 		void viewport(Window* window);
 		void clear(float r, float g, float b, float a);
+		void enableBlend();
 
 		static glm::mat4 getView();
 		static glm::mat4 getProjection();
