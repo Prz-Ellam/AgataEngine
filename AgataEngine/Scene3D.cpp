@@ -138,9 +138,10 @@ namespace Agata {
 		grass = new GrassManager(3);
 		grass->addGrassUnit(glm::vec3(5.0f, 1.935f, 13.0f), glm::vec3(0.4f), 0);
 		grass->addGrassUnit(glm::vec3(4.87f, 1.735f, 8.7f), glm::vec3(0.4f), 0);
-		grass->addGrassUnit(glm::vec3(4.97f, 1.835f, 10.7f), glm::vec3(0.4f), 0);
+		grass->addGrassUnit(glm::vec3(4.97f, 1.835f, 10.7f), glm::vec3(0.4f), 1);
 		grass->batchGrassUnits();
 		grass->addTexture("grass.png"s);
+		grass->addTexture("grass5.png"s);
 
 
 	}

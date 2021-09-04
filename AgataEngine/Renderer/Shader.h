@@ -13,6 +13,7 @@ namespace Agata {
 	public:
 		Shader(const std::string& vertexFilePath, const std::string& fragmentFilePath);
 		Shader(const Shader& other) = delete;
+		Shader(Shader&& other) noexcept;
 		~Shader();
 
 		void bind() const;

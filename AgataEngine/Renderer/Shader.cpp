@@ -23,6 +23,14 @@ namespace Agata {
 
 	}
 
+	Shader::Shader(Shader&& other) noexcept {
+
+		this->m_ID = other.m_ID;
+		this->m_UniformLocationsCache = other.m_UniformLocationsCache;
+		other.m_ID = 0;
+
+	}
+
 	Shader::~Shader() {
 
 		glDeleteProgram(m_ID);

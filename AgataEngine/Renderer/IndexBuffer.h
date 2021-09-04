@@ -10,6 +10,7 @@ namespace Agata {
 		IndexBuffer(const void* data, size_t size);
 		IndexBuffer(size_t size);
 		IndexBuffer(const IndexBuffer& other) = delete;
+		IndexBuffer(IndexBuffer&& other) noexcept;
 		~IndexBuffer();
 		void bind() const;
 		void unbind() const;

@@ -30,15 +30,15 @@ namespace Agata {
 
 	struct AnimVertex {
 		AnimVertex(const glm::vec3& coords, const glm::vec2& uv, const glm::vec3& normals, const glm::vec3& tangents, 
-			const glm::vec3& bitangents, const glm::vec3& joints, const glm::vec3& weights);
+			const glm::vec3& bitangents, const glm::vec4& joints, const glm::vec4& weights);
 		AnimVertex() = default;
 		glm::vec3 coords;
 		glm::vec2 uv;
 		glm::vec3 normals;
 		glm::vec3 tangents;
 		glm::vec3 bitangents;
-		glm::vec3 joints;
-		glm::vec3 weights;
+		glm::vec4 joints;
+		glm::vec4 weights;
 	};
 
 	struct GrassVertex {

@@ -42,8 +42,8 @@ namespace Agata {
 		layouts.emplace_back(2, DataType::Float3);
 		layouts.emplace_back(3, DataType::Float3);
 		layouts.emplace_back(4, DataType::Float3);
-		layouts.emplace_back(5, DataType::Float3);
-		layouts.emplace_back(6, DataType::Float3);
+		layouts.emplace_back(5, DataType::Float4);
+		layouts.emplace_back(6, DataType::Float4);
 
 		m_VAO->attachVertexBuffer(m_VBO, layouts);
 		m_VAO->attachIndexBuffer(m_IBO);

@@ -14,7 +14,7 @@ namespace Agata {
 	}
 
 	AnimVertex::AnimVertex(const glm::vec3& coords, const glm::vec2& uv, const glm::vec3& normals, const glm::vec3& tangents,
-		const glm::vec3& bitangents, const glm::vec3& joints, const glm::vec3& weights) 
+		const glm::vec3& bitangents, const glm::vec4& joints, const glm::vec4& weights) 
 		: coords(coords), uv(uv), normals(normals), tangents(tangents), bitangents(bitangents), joints(joints), weights(weights) {
 
 	}

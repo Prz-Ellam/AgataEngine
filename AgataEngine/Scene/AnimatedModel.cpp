@@ -212,7 +212,7 @@ namespace Agata {
 				uint32_t vertexID = joint->mWeights[j].mVertexId;
 				float weight = joint->mWeights[j].mWeight;
 
-				if (jointPos[vertexID] < 3) {
+				if (jointPos[vertexID] < 4) {
 					vertices[vertexID].joints[jointPos[vertexID]] = jointIndex;
 					vertices[vertexID].weights[jointPos[vertexID]] = weight;
 					jointPos[vertexID]++;

@@ -12,6 +12,7 @@ namespace Agata {
 	public:
 		VertexArray();
 		VertexArray(const VertexArray& other) = delete;
+		VertexArray(VertexArray&& other) noexcept;
 		~VertexArray();
 
 		void bind() const;

@@ -10,6 +10,7 @@ namespace Agata {
 		VertexBuffer(const void* data, size_t size);
 		VertexBuffer(size_t size);
 		VertexBuffer(const VertexBuffer& other) = delete;
+		VertexBuffer(VertexBuffer&& other) noexcept;
 		~VertexBuffer();
 		void bind() const;
 		void unbind() const;

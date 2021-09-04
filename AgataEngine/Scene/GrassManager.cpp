@@ -26,6 +26,8 @@ namespace Agata {
 		m_VAO->attachVertexBuffer(m_VBO, layouts);
 		m_VAO->attachIndexBuffer(m_IBO);
 
+		//m_Textures.reserve(32);
+
 	}
 
 	GrassManager::~GrassManager() {

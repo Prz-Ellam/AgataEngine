@@ -73,6 +73,17 @@ namespace Agata {
 
 	}
 
+	Texture2D::Texture2D(Texture2D&& other) noexcept {
+
+		this->m_ID = other.m_ID;
+		this->m_Width = other.m_Width;
+		this->m_Height = other.m_Height;
+		this->m_BPP = other.m_BPP;
+
+		other.m_ID = 0;
+
+	}
+
 	Texture2D::~Texture2D() {
 
 		glDeleteTextures(1, &m_ID);

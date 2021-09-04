@@ -21,6 +21,13 @@ namespace Agata {
 
 	}
 
+	IndexBuffer::IndexBuffer(IndexBuffer&& other) noexcept {
+
+		this->m_ID = other.m_ID;
+		other.m_ID = 0;
+
+	}
+
 	IndexBuffer::~IndexBuffer() {
 
 		glDeleteBuffers(1, &m_ID);

@@ -9,6 +9,7 @@ namespace Agata {
 	public:
 		FrameBuffer(uint32_t width, uint32_t height);
 		FrameBuffer(const FrameBuffer& other) = delete;
+		FrameBuffer(FrameBuffer&& other) noexcept;
 		~FrameBuffer();
 
 		void bind(uint32_t width, uint32_t height) const;

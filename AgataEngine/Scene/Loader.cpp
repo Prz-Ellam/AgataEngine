@@ -360,13 +360,14 @@ namespace Agata {
 			Normalize the vertex weights
 		*/
 		for (int i = 0; i < verticesAux.size(); i++) {
-			glm::vec3& boneWeights = verticesAux[i].weights;
-			float totalWeight = boneWeights.x + boneWeights.y + boneWeights.z;
+			glm::vec4& boneWeights = verticesAux[i].weights;
+			float totalWeight = boneWeights.x + boneWeights.y + boneWeights.z + boneWeights.w;
 			if (totalWeight > 0.0f) {
-				verticesAux[i].weights = glm::vec3(
+				verticesAux[i].weights = glm::vec4(
 					boneWeights.x / totalWeight,
 					boneWeights.y / totalWeight,
-					boneWeights.z / totalWeight
+					boneWeights.z / totalWeight,
+					boneWeights.w / totalWeight
 				);
 			}
 		}

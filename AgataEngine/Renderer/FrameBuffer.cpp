@@ -12,6 +12,17 @@ namespace Agata {
 
 	}
 
+	FrameBuffer::FrameBuffer(FrameBuffer&& other) noexcept {
+
+		this->m_ID = other.m_ID;
+		this->m_ColorTextureID = other.m_ColorTextureID;
+		this->m_DepthTextureID = other.m_DepthTextureID;
+		this->m_RenderBuffer = other.m_RenderBuffer;
+
+		other.m_ID = 0;
+
+	}
+
 	FrameBuffer::~FrameBuffer() {
 
 		glDeleteFramebuffers(1, &m_ID);

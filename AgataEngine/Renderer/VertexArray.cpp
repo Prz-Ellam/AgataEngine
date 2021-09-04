@@ -9,6 +9,13 @@ namespace Agata {
 
 	}
 
+	VertexArray::VertexArray(VertexArray&& other) noexcept {
+
+		this->m_ID = other.m_ID;
+		other.m_ID = 0;
+
+	}
+
 	VertexArray::~VertexArray() {
 
 		glDeleteVertexArrays(1, &m_ID);

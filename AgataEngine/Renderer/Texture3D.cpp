@@ -33,6 +33,17 @@ namespace Agata {
 
 	}
 
+	Texture3D::Texture3D(Texture3D&& other) noexcept {
+
+		this->m_ID = other.m_ID;
+		this->m_Width = other.m_Width;
+		this->m_Height = other.m_Height;
+		this->m_BPP = other.m_BPP;
+
+		other.m_ID = 0;
+
+	}
+
 	Texture3D::~Texture3D() {
 
 		glDeleteTextures(1, &m_ID);

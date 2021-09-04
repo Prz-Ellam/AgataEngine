@@ -21,6 +21,13 @@ namespace Agata {
 
 	}
 
+	VertexBuffer::VertexBuffer(VertexBuffer&& other) noexcept {
+
+		this->m_ID = other.m_ID;
+		other.m_ID = 0;
+
+	}
+
 	VertexBuffer::~VertexBuffer() {
 
 		glDeleteBuffers(1, &m_ID);
