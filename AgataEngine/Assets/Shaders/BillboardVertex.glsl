@@ -18,6 +18,7 @@ void main() {
 
 	vec4 worldPos = u_Model * vec4(a_Pos, 1.0f);
 	gl_Position = u_Projection * u_View * worldPos;
+
 	fs_TexCoords = a_TexCoords;
 
 	fs_UnitNormal = normalize(vec3(u_Model * vec4(a_Normals, 0.0f)));

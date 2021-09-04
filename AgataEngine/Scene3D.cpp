@@ -108,7 +108,7 @@ namespace Agata {
 			skybox = new Skybox("Assets//Images//right.png", "Assets//Images//left.png", "Assets//Images//top.png",
 				"Assets//Images//bottom.png", "Assets//Images//front.png", "Assets//Images//back.png", 500.0f);
 		}
-		//billboard = new Billboard("Assets\\fireNoise.png"s, glm::vec3(11.302f, 2.518f, 12.408f), glm::vec3(1.0f));
+		billboard = new Billboard("grass.png"s, glm::vec3(4.87f, 1.735f, 8.7f), glm::vec3(0.4f));
 
 		fire = new Fire("Assets\\rampFire.gif"s, "Assets\\alphaFire.gif"s, "Assets\\dudv.png"s, "Assets\\fireNoise.png"s, 
 			glm::vec3(11.302f, 2.518f, 12.408f), glm::vec3(1.0f));
@@ -120,10 +120,11 @@ namespace Agata {
 			shaderModel = std::make_shared<Shader>("Assets//Shaders//ModelVertex.glsl", "Assets//Shaders//ModelFragment.glsl");
 			shaderTerrain = std::make_shared<Shader>("Assets//Shaders//TerrainVertex.glsl", "Assets//Shaders//TerrainFragment.glsl");
 			shaderSkybox = std::make_shared<Shader>("Assets//Shaders//SkyBoxVertex.glsl", "Assets//Shaders//SkyBoxFragment.glsl");
-			shaderBill = std::make_shared<Shader>("Assets//Shaders//FireVertex.glsl", "Assets//Shaders//FireFragment.glsl");
+			shaderBill = std::make_shared<Shader>("Assets//Shaders//BillboardVertex.glsl", "Assets//Shaders//BillboardFragment.glsl");
 			shaderFire = std::make_shared<Shader>("Assets//Shaders//FireVertex.glsl", "Assets//Shaders//FireFragment.glsl");
 			shaderWater = std::make_shared<Shader>("Assets//Shaders//WaterVertex.glsl", "Assets//Shaders//WaterFragment.glsl");
 			shaderZoom = std::make_shared<Shader>("Assets//Shaders//ZoomVertex.glsl", "Assets//Shaders//ZoomFragment.glsl");
+			shaderGrass = std::make_shared<Shader>("Assets//Shaders//GrassVertex.glsl", "Assets//Shaders//BillboardFragment.glsl");
 		}
 
 		{
@@ -143,12 +144,13 @@ namespace Agata {
 		delete animatedModel;
 		delete terrain;
 		delete skybox;
-		//delete billboard;
+		delete billboard;
 		delete fire;
 		delete water;
 		delete light;
 		delete m_Camera;
 		delete m_InvertCamera;
+		delete spyGlassZoom;
 
 	}
 
@@ -258,8 +260,8 @@ namespace Agata {
 			skybox->draw(shaderSkybox, *light);
 			terrain->draw(shaderTerrain, *light);
 			animatedModel->draw(shaderModel, *light, ts);
-			//billboard->draw(shaderBill, *light);
 			fire->draw(shaderFire, dt);
+			billboard->draw(shaderGrass, *light, dt);
 
 			water->draw(shaderWater, *light);
 
@@ -330,7 +332,7 @@ namespace Agata {
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		//ImGui::SliderFloat3("Light Position:", &light->getPosition()[0], -100, 100);
 		//ImGui::SliderFloat3("Light Colour:", &light->getColour()[0], 0, 1);
-		//ImGui::SliderFloat3("Player Position:", &m_Camera->getPosition()[0], 0, 20);
+		ImGui::SliderFloat3("Player Position:", &m_Camera->getPosition()[0], 0, 20);
 		//ImGui::SliderFloat3("Player Forward:", &m_Camera->getForward()[0], -100, 100);
 		//ImGui::SliderFloat3("Player Right:", &m_Camera->getRight()[0], -100, 100);
 		//ImGui::SliderFloat("Player Pitch:", &m_Camera->getPitch(), -100, 100);

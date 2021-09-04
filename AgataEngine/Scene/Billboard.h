@@ -18,7 +18,7 @@ namespace Agata {
 		~Billboard();
 
 		glm::vec3& getPositionRef() { return m_Position; }
-		void draw(std::shared_ptr<Shader> shader, Light& light);
+		void draw(std::shared_ptr<Shader> shader, Light& light, float dt);
 	private:
 		Mesh* m_Mesh;
 		Texture2D m_Texture;
@@ -26,11 +26,7 @@ namespace Agata {
 		glm::vec3 m_Rotation;
 		glm::vec3 m_Scale;
 		glm::mat4 m_Transformation;
-		// temporal
-		Texture2D alpha = Texture2D("Assets\\alphaFire.gif");
-		Texture2D ramp = Texture2D("Assets\\rampFire.gif");
-		Texture2D dudv = Texture2D("Assets\\dudv.png");
-		float displacement;
+		float time = 0.0f;
 	};
 
 }

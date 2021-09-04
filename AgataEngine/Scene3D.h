@@ -47,6 +47,7 @@ namespace Agata {
 		std::shared_ptr<Shader> shaderTerrain;
 		std::shared_ptr<Shader> shaderSkybox;
 		std::shared_ptr<Shader> shaderBill;
+		std::shared_ptr<Shader> shaderGrass;
 		std::shared_ptr<Shader> shaderFire;
 		std::shared_ptr<Shader> shaderWater;
 		std::shared_ptr<Shader> shaderZoom;

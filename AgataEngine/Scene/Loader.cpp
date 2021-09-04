@@ -563,17 +563,17 @@ namespace Agata {
 		std::vector<Vertex3D> verticesAux;
 		verticesAux.resize(4);
 		verticesAux[0].coords = glm::vec3(-1.0f, -1.0f, 0.0f);
-		verticesAux[0].uv = glm::vec2(0.0f, 0.0f);
-		verticesAux[0].normals = glm::vec3(0.0f, 0.0f, -1.0f);
 		verticesAux[1].coords = glm::vec3(1.0f, -1.0f, 0.0f);
-		verticesAux[1].uv = glm::vec2(1.0f, 0.0f);
-		verticesAux[1].normals = glm::vec3(0.0f, 0.0f, -1.0f);
 		verticesAux[2].coords = glm::vec3(1.0f, 1.0f, 0.0f);
-		verticesAux[2].uv = glm::vec2(1.0f, 1.0f);
-		verticesAux[2].normals = glm::vec3(0.0f, 0.0f, -1.0f);
 		verticesAux[3].coords = glm::vec3(-1.0f, 1.0f, 0.0f);
+		verticesAux[0].uv = glm::vec2(0.0f, 0.0f);
+		verticesAux[1].uv = glm::vec2(1.0f, 0.0f);
+		verticesAux[2].uv = glm::vec2(1.0f, 1.0f);
 		verticesAux[3].uv = glm::vec2(0.0f, 1.0f);
-		verticesAux[3].normals = glm::vec3(0.0f, 0.0f, -1.0f);
+		verticesAux[0].normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		verticesAux[1].normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		verticesAux[2].normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		verticesAux[3].normals = glm::vec3(0.0f, 1.0f, 0.0f);
 
 		std::vector<uint32_t> indicesAux;
 		indicesAux.resize(6);
@@ -583,6 +583,74 @@ namespace Agata {
 		indicesAux[3] = 2;
 		indicesAux[4] = 3;
 		indicesAux[5] = 0;
+
+		return { verticesAux, indicesAux };
+
+	}
+
+	std::tuple<std::vector<Vertex3D>, std::vector<uint32_t>> Loader::loadGrass() {
+
+		std::vector<Vertex3D> verticesAux;
+		verticesAux.resize(12);
+		verticesAux[0].coords = glm::vec3(-1.0f, -1.0f, 0.0f);
+		verticesAux[1].coords = glm::vec3(1.0f, -1.0f, 0.0f);
+		verticesAux[2].coords = glm::vec3(1.0f, 1.0f, 0.0f);
+		verticesAux[3].coords = glm::vec3(-1.0f, 1.0f, 0.0f);
+		verticesAux[4].coords = glm::vec3(-0.7071f, -1.0f, 0.7071f);
+		verticesAux[5].coords = glm::vec3(0.7071f, -1.0f, -0.7071f);
+		verticesAux[6].coords = glm::vec3(0.7071f, 1.0f, -0.7071f);
+		verticesAux[7].coords = glm::vec3(-0.7071f, 1.0f, 0.7071f);
+		verticesAux[8].coords = glm::vec3(0.7071f, -1.0f, 0.7071f);
+		verticesAux[9].coords = glm::vec3(-0.7071f, -1.0f, -0.7071f);
+		verticesAux[10].coords = glm::vec3(-0.7071f, 1.0f, -0.7071f);
+		verticesAux[11].coords = glm::vec3(0.7071f, 1.0f, 0.7071f);
+
+		verticesAux[0].uv = glm::vec2(0.0f, 0.0f);
+		verticesAux[1].uv = glm::vec2(1.0f, 0.0f);
+		verticesAux[2].uv = glm::vec2(1.0f, 1.0f);
+		verticesAux[3].uv = glm::vec2(0.0f, 1.0f);
+		verticesAux[4].uv = glm::vec2(0.0f, 0.0f);
+		verticesAux[5].uv = glm::vec2(1.0f, 0.0f);
+		verticesAux[6].uv = glm::vec2(1.0f, 1.0f);
+		verticesAux[7].uv = glm::vec2(0.0f, 1.0f);
+		verticesAux[8].uv = glm::vec2(0.0f, 0.0f);
+		verticesAux[9].uv = glm::vec2(1.0f, 0.0f);
+		verticesAux[10].uv = glm::vec2(1.0f, 1.0f);
+		verticesAux[11].uv = glm::vec2(0.0f, 1.0f);
+
+		verticesAux[0].normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		verticesAux[1].normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		verticesAux[2].normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		verticesAux[3].normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		verticesAux[4].normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		verticesAux[5].normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		verticesAux[6].normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		verticesAux[7].normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		verticesAux[8].normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		verticesAux[9].normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		verticesAux[10].normals = glm::vec3(0.0f, 1.0f, 0.0f);
+		verticesAux[11].normals = glm::vec3(0.0f, 1.0f, 0.0f);
+
+		std::vector<uint32_t> indicesAux;
+		indicesAux.resize(18);
+		indicesAux[0] = 0;
+		indicesAux[1] = 1;
+		indicesAux[2] = 2;
+		indicesAux[3] = 2;
+		indicesAux[4] = 3;
+		indicesAux[5] = 0;
+		indicesAux[6] = 4;
+		indicesAux[7] = 5;
+		indicesAux[8] = 6;
+		indicesAux[9] = 6;
+		indicesAux[10] = 7;
+		indicesAux[11] = 4;
+		indicesAux[12] = 8;
+		indicesAux[13] = 9;
+		indicesAux[14] = 10;
+		indicesAux[15] = 10;
+		indicesAux[16] = 11;
+		indicesAux[17] = 8;
 
 		return { verticesAux, indicesAux };
 

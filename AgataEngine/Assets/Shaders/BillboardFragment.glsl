@@ -17,6 +17,11 @@ void main() {
 	diffuseFactor = max(diffuseFactor, 0.0f);
 	vec4 diffuse = diffuseFactor * u_LightColour;
 
-	o_Color = texture(u_Texture, fs_TexCoords) * (diffuse + ambient);
+	vec4 texColor = texture(u_Texture, fs_TexCoords);
+	if (texColor.a < 0.5f) {
+		discard;
+	}
+
+	o_Color = texColor * (diffuse + ambient);
 
 }
