@@ -4,6 +4,7 @@
 #include "Loader.h"
 #include "Timer.h"
 #include <Windows.h>
+#include "Input.h"
 #include "Random.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
@@ -316,11 +317,11 @@ namespace Agata {
 		}
 
 		if (e.getKeyCode() == GLFW_KEY_P && e.getAction() == GLFW_PRESS) { // Abstract this pls, no GLFW in Scene Class
-			if (glfwGetInputMode(m_Window->getHandler(), GLFW_CURSOR) == GLFW_CURSOR_NORMAL) {
-				glfwSetInputMode(m_Window->getHandler(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			if (Input::getCursorMode(m_Window) == CursorMode::Normal) {
+				Input::setCursorMode(m_Window, CursorMode::Disabled);
 			}
 			else {
-				glfwSetInputMode(m_Window->getHandler(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+				Input::setCursorMode(m_Window, CursorMode::Normal);
 			}
 		}
 
