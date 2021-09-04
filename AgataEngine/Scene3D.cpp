@@ -109,7 +109,7 @@ namespace Agata {
 			skybox = new Skybox("Assets//Images//right.png", "Assets//Images//left.png", "Assets//Images//top.png",
 				"Assets//Images//bottom.png", "Assets//Images//front.png", "Assets//Images//back.png", 500.0f);
 		}
-		billboard = new Billboard("grass.png"s, glm::vec3(4.87f, 1.735f, 8.7f), glm::vec3(0.4f));
+		//billboard = new Billboard("grass.png"s, glm::vec3(4.87f, 1.735f, 8.7f), glm::vec3(0.4f));
 
 		fire = new Fire("Assets\\rampFire.gif"s, "Assets\\alphaFire.gif"s, "Assets\\dudv.png"s, "Assets\\fireNoise.png"s, 
 			glm::vec3(11.302f, 2.518f, 12.408f), glm::vec3(1.0f));
@@ -125,7 +125,7 @@ namespace Agata {
 			shaderFire = std::make_shared<Shader>("Assets//Shaders//FireVertex.glsl", "Assets//Shaders//FireFragment.glsl");
 			shaderWater = std::make_shared<Shader>("Assets//Shaders//WaterVertex.glsl", "Assets//Shaders//WaterFragment.glsl");
 			shaderZoom = std::make_shared<Shader>("Assets//Shaders//ZoomVertex.glsl", "Assets//Shaders//ZoomFragment.glsl");
-			shaderGrass = std::make_shared<Shader>("Assets//Shaders//GrassVertex.glsl", "Assets//Shaders//BillboardFragment.glsl");
+			shaderGrass = std::make_shared<Shader>("Assets//Shaders//GrassVertex.glsl", "Assets//Shaders//GrassFragment.glsl");
 		}
 
 		{
@@ -135,6 +135,14 @@ namespace Agata {
 
 		light = new Light(glm::vec3(11.0f, 0.0f, -10.0f), glm::vec3(255.0f / 255.0f, 128.0f / 255.0f, 128.0f / 255.0f));
 
+		grass = new GrassManager(3);
+		grass->addGrassUnit(glm::vec3(5.0f, 1.935f, 13.0f), glm::vec3(0.4f), 0);
+		grass->addGrassUnit(glm::vec3(4.87f, 1.735f, 8.7f), glm::vec3(0.4f), 0);
+		grass->addGrassUnit(glm::vec3(4.97f, 1.835f, 10.7f), glm::vec3(0.4f), 0);
+		grass->batchGrassUnits();
+		grass->addTexture("grass.png"s);
+
+
 	}
 
 	void Scene3D::shutdown() {
@@ -142,10 +150,11 @@ namespace Agata {
 		delete imGui;
 		delete m_Window;
 		//delete model;
+		delete grass;
 		delete animatedModel;
 		delete terrain;
 		delete skybox;
-		delete billboard;
+		//delete billboard;
 		delete fire;
 		delete water;
 		delete light;
@@ -262,8 +271,8 @@ namespace Agata {
 			terrain->draw(shaderTerrain, *light);
 			animatedModel->draw(shaderModel, *light, ts);
 			fire->draw(shaderFire, dt);
-			billboard->draw(shaderGrass, *light, dt);
-
+			//billboard->draw(shaderGrass, *light, dt);
+			grass->draw(shaderGrass, *light, dt);
 			water->draw(shaderWater, *light);
 
 			//m_Camera->setSensitivity(124.44444f);

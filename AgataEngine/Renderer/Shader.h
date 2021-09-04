@@ -20,6 +20,7 @@ namespace Agata {
 
 		void sendFloat(const std::string& uniform, float value);
 		void sendInt1(const std::string& uniform, int value);
+		void sendIntArray(const std::string& uniform, const int* data, size_t count);
 		void sendVec3(const std::string& uniform, const glm::vec3& value);
 		void sendVec4(const std::string& uniform, const glm::vec4& value);
 		void sendMat4(const std::string& uniform, const glm::mat4& value);

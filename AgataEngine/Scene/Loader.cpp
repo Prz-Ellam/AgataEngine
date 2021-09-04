@@ -588,9 +588,10 @@ namespace Agata {
 
 	}
 
-	std::tuple<std::vector<Vertex3D>, std::vector<uint32_t>> Loader::loadGrass() {
+	std::tuple<std::vector<GrassVertex>, std::vector<uint32_t>> Loader::loadGrass() {
 
-		std::vector<Vertex3D> verticesAux;
+		// 12 Vertices, 18 Indices
+		std::vector<GrassVertex> verticesAux;
 		verticesAux.resize(12);
 		verticesAux[0].coords = glm::vec3(-1.0f, -1.0f, 0.0f);
 		verticesAux[1].coords = glm::vec3(1.0f, -1.0f, 0.0f);

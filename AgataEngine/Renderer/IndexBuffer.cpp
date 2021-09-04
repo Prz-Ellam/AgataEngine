@@ -12,6 +12,15 @@ namespace Agata {
 
 	}
 
+	IndexBuffer::IndexBuffer(size_t size) {
+
+		glGenBuffers(1, &m_ID);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	}
+
 	IndexBuffer::~IndexBuffer() {
 
 		glDeleteBuffers(1, &m_ID);
@@ -26,6 +35,14 @@ namespace Agata {
 
 	void IndexBuffer::unbind() const {
 
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	}
+
+	void IndexBuffer::sendData(const void* data, size_t size, int64_t offset) {
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ID);
+		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, size, data);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	}

@@ -12,6 +12,15 @@ namespace Agata {
 
 	}
 
+	VertexBuffer::VertexBuffer(size_t size) {
+
+		glGenBuffers(1, &m_ID);
+		glBindBuffer(GL_ARRAY_BUFFER, m_ID);
+		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	}
+
 	VertexBuffer::~VertexBuffer() {
 
 		glDeleteBuffers(1, &m_ID);
@@ -26,6 +35,14 @@ namespace Agata {
 
 	void VertexBuffer::unbind() const {
 
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	}
+
+	void VertexBuffer::sendData(const void* data, size_t size, int64_t offset) {
+
+		glBindBuffer(GL_ARRAY_BUFFER, m_ID);
+		glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	}

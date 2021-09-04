@@ -14,6 +14,7 @@
 #include "ImGuiLayer.h"
 #include "Zoom.h"
 #include "Fire.h"
+#include "GrassManager.h"
 #include <memory>
 
 namespace Agata {
@@ -56,8 +57,8 @@ namespace Agata {
 		Camera* m_InvertCamera;
 		Water* water;
 		Light* light;
+		GrassManager* grass;
 		float lightAngle;
-		glm::mat4 joint = glm::mat4(1.0f);
 	};
 
 }

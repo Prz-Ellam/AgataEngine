@@ -123,6 +123,12 @@ namespace Agata {
 
 	}
 
+	void Shader::sendIntArray(const std::string& uniform, const int* data, size_t count) {
+
+		glUniform1iv(getUniformLocation(uniform), count, data);
+
+	}
+
 	void Shader::sendMat4(const std::string& uniform, const glm::mat4& value) {
 
 		glUniformMatrix4fv(getUniformLocation(uniform), 1, GL_FALSE, glm::value_ptr(value));

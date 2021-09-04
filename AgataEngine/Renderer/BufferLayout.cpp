@@ -19,6 +19,13 @@ namespace Agata {
 
 	}
 
+	GrassVertex::GrassVertex(const glm::vec3& coords, const glm::vec2& uv, const glm::vec3& normals, const glm::vec3& tangents,
+		const glm::vec3& bitangents, float texIndex, float displacement) 
+		: coords(coords), uv(uv), normals(normals), tangents(tangents), bitangents(bitangents), texIndex(texIndex), 
+		displacement(displacement) {
+
+	}
+
 	size_t BufferLayout::getDataTypeSize(DataType type) {
 
 		switch (type) {

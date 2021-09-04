@@ -17,7 +17,7 @@ namespace Agata {
 	Billboard::Billboard(const std::string& filePath, const glm::vec3& position, const glm::vec3& scale) : m_Texture(filePath),
 		m_Position(position), m_Scale(scale) {
 
-		auto [vertices, indices] = Loader::loadGrass();
+		auto [vertices, indices] = Loader::loadQuad();
 
 		m_Mesh = new Mesh(vertices, indices);
 

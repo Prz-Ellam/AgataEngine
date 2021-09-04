@@ -40,7 +40,7 @@ namespace Agata {
 		static std::tuple<std::vector<glm::vec3>, std::vector<uint32_t>> loadSkyBox(float size);
 		static std::tuple<std::vector<Vertex3D>, std::vector<uint32_t>> loadQuad();
 
-		static std::tuple<std::vector<Vertex3D>, std::vector<uint32_t>> loadGrass();
+		static std::tuple<std::vector<GrassVertex>, std::vector<uint32_t>> loadGrass();
 
 		static std::tuple<std::vector<Vertex3D>, std::vector<uint32_t>> loadHorizontalQuad();
 		// loadTerrain
