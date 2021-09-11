@@ -28,6 +28,15 @@ namespace Agata {
 
 	}
 
+	IndexBuffer& IndexBuffer::operator=(IndexBuffer&& other) noexcept {
+
+		uint32_t aux = this->m_ID;
+		this->m_ID = other.m_ID;
+		other.m_ID = aux;
+		return *this;
+
+	}
+
 	IndexBuffer::~IndexBuffer() {
 
 		glDeleteBuffers(1, &m_ID);

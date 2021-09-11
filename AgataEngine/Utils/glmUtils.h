@@ -11,6 +11,7 @@
 
 glm::mat4 transformationMatrix(const glm::vec3& pos, const glm::vec3& rot, const glm::vec3& scale);
 glm::mat4 transformationMatrix(const glm::vec3& pos, const glm::quat& quat, const glm::vec3& scale);
+glm::mat4 transformationMatrix(const glm::vec3& pos, const glm::vec3& scale);
 
 float baryCentricCoordinatesY(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const glm::vec2& pos);
 

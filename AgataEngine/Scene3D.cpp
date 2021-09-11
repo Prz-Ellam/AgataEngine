@@ -73,7 +73,7 @@ namespace Agata {
 			//	ShininessMaterial(32).
 			//	BuildHeap();
 
-			animatedModel = AnimatedModelBuilder().
+			animatedModel = AnimatedModelBuilder::GenerateParams().
 				ModelPath("Assets\\Character.fbx"s).
 				Position(glm::vec3(6.10f, 1.4f, 11.12f)).
 				Rotation(glm::vec3(0.0f, 0.0f, 0.0f)).
@@ -83,14 +83,14 @@ namespace Agata {
 				//NormalTexture("Assets\\normal.png"s).
 				AmbientMaterial(glm::vec3(0.75f)).
 				DiffuseMaterial(glm::vec3(0.85f)).
-				SpecularMaterial(glm::vec3(0.0f)).
-				ShininessMaterial(0).
-				BuildHeap();
+				SpecularMaterial(glm::vec3(1.0f)).
+				ShininessMaterial(32).
+				BuildNew();
 		}
 
 		{
 			Agata::Timer terrainBuilder("TerrainBuilder");
-			terrain = TerrainBuilder().
+			terrain = TerrainBuilder::GenerateParams().
 				RedTexture("Assets\\snow.jpg"s).
 				GreenTexture("Multi1.jpg"s).
 				BlueTexture("Assets\\dirt.jpg"s).
@@ -100,8 +100,12 @@ namespace Agata {
 				RedNormal("Assets\\snowNorm.jpg"s).
 				//GreenNormal(".png"s).
 				BlueNormal("Assets\\dirtNorm.jpg"s).
+				Position(glm::vec3(0.0f)).
 				//BlackNormal(".png"s).
-				BuildHeap();
+				Height(6.0f).
+				Width(20.0f).
+				Depth(20.0f).
+				BuildNew();
 		}
 
 		{
@@ -126,6 +130,7 @@ namespace Agata {
 			shaderWater = std::make_shared<Shader>("Assets//Shaders//WaterVertex.glsl", "Assets//Shaders//WaterFragment.glsl");
 			shaderZoom = std::make_shared<Shader>("Assets//Shaders//ZoomVertex.glsl", "Assets//Shaders//ZoomFragment.glsl");
 			shaderGrass = std::make_shared<Shader>("Assets//Shaders//GrassVertex.glsl", "Assets//Shaders//GrassFragment.glsl");
+			shaderAnimatedModel = std::make_shared<Shader>("Assets//Shaders//AnimatedModelVertex.glsl", "Assets//Shaders//ModelFragment.glsl");
 		}
 
 		{
@@ -139,10 +144,10 @@ namespace Agata {
 		grass->addGrassUnit(glm::vec3(5.0f, 1.935f, 13.0f), glm::vec3(0.4f), 0);
 		grass->addGrassUnit(glm::vec3(4.87f, 1.735f, 8.7f), glm::vec3(0.4f), 0);
 		grass->addGrassUnit(glm::vec3(4.97f, 1.835f, 10.7f), glm::vec3(0.4f), 1);
-		grass->batchGrassUnits();
 		grass->addTexture("grass.png"s);
 		grass->addTexture("grass5.png"s);
 
+		fbo = new FrameBuffer(m_Window->getWidth(), m_Window->getHeight());
 
 	}
 
@@ -235,6 +240,19 @@ namespace Agata {
 			m_InvertCamera->move(m_Window->getHandler(), *terrain, dt);
 			m_Camera->move(m_Window->getHandler(), *terrain, dt);
 
+
+			fbo->bind(m_Window->getWidth(), m_Window->getHeight());
+			m_Renderer.clear(0.1f, 0.1f, 0.1f, 1.0f);
+			skybox->draw(shaderSkybox, *light);
+			terrain->draw(shaderTerrain, *light);
+			animatedModel->draw(shaderAnimatedModel, *light, ts);
+			fire->draw(shaderFire, dt);
+			//billboard->draw(shaderGrass, *light, dt);
+			grass->draw(shaderGrass, *light, dt);
+			water->draw(shaderWater, *light);
+			fbo->unbind();
+
+
 			glEnable(GL_CLIP_DISTANCE0);
 
 			float distance = 2 * (m_Camera->getPosition().y - water->getHeight());
@@ -270,7 +288,7 @@ namespace Agata {
 			m_Renderer.clear(0.1f, 0.1f, 0.1f, 1.0f);
 			skybox->draw(shaderSkybox, *light);
 			terrain->draw(shaderTerrain, *light);
-			animatedModel->draw(shaderModel, *light, ts);
+			animatedModel->draw(shaderAnimatedModel, *light, ts);
 			fire->draw(shaderFire, dt);
 			//billboard->draw(shaderGrass, *light, dt);
 			grass->draw(shaderGrass, *light, dt);

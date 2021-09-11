@@ -10,16 +10,16 @@ namespace Agata {
 	Terrain::Terrain(const std::string& textureRFilePath, const std::string& textureGFilePath, const std::string& textureBFilePath,
 		const std::string& textureBGFilePath, const std::string& blendMapFilePath, const std::string& heightMapFilePath,
 		const std::string& redNormal, const std::string& greenNormal, const std::string& blueNormal,
-		const std::string& backgroundNormal, float tilingFactor) :
+		const std::string& backgroundNormal, const glm::vec3& position, float height, float xSize, float zSize, float tilingFactor) :
 		textureRed(textureRFilePath), textureGreen(textureGFilePath), textureBlue(textureBFilePath), textureBackground(textureBGFilePath),
 		redNormal(redNormal, DefaultTex::NormalMap), blueNormal(blueNormal, DefaultTex::NormalMap),
 		greenNormal(greenNormal, DefaultTex::NormalMap), backgroundNormal(backgroundNormal, DefaultTex::NormalMap),
-		blendMap(blendMapFilePath), m_TilingFactor(tilingFactor) {
+		blendMap(blendMapFilePath), m_TilingFactor(tilingFactor), m_Position(position) {
 
 		std::vector<Vertex3D> vertices;
 		std::vector<uint32_t> indices;
 
-		generateTerrain(vertices, indices, 20, 20, heightMapFilePath.c_str(), 6);
+		generateTerrain(vertices, indices, xSize, zSize, heightMapFilePath.c_str(), height);
 
 		m_Mesh = new Mesh(vertices, indices);
 
@@ -66,7 +66,7 @@ namespace Agata {
 		m_GridSpacingZ = zSize / ((float)width - 1);
 
 		verticesAux.resize(count);
-		indicesAux.resize(6 * (length - 1) * (width - 1));
+		indicesAux.resize(6ll * (length - 1ll) * (width - 1ll));
 		m_Heights.resize(count);
 
 		// Load coordinates, normals and texture coordinates
@@ -133,7 +133,7 @@ namespace Agata {
 		if (buffer && !defaultHeightMap)
 			stbi_image_free(buffer);
 		else if (buffer && defaultHeightMap)
-			delete[] buffer;
+			delete buffer;
 
 		vertices = verticesAux;
 		indices = indicesAux;
@@ -167,7 +167,7 @@ namespace Agata {
 	void Terrain::draw(std::shared_ptr<Shader> shader, Light& light, const glm::vec4& clipDistance) {
 
 		shader->bind();
-		shader->sendMat4("u_Model", glm::mat4(1.0f));
+		shader->sendMat4("u_Model", glm::translate(glm::mat4(1.0f), m_Position));
 		shader->sendMat4("u_View", Renderer::getView());
 		shader->sendMat4("u_Projection", Renderer::getProjection());
 		shader->sendVec3("u_CameraPos", Renderer::getPosition());
@@ -194,28 +194,30 @@ namespace Agata {
 	float Terrain::getHeight(float x, float z) {
 
 		//Agata::Profiler e(__FUNCTION__);
+		float terrainX = x - m_Position.x;
+		float terrainZ = z - m_Position.z;
 
-		int gridX = ((int)(x / m_GridSpacingX)) + 1;
-		int gridZ = ((int)(z / m_GridSpacingZ)) + 1;
+		int gridX = ((int)(terrainX / m_GridSpacingX)) + 1;
+		int gridZ = ((int)(terrainZ / m_GridSpacingZ)) + 1;
 
 		if (gridX < 0 || gridZ < 0 || gridX > glm::sqrt(m_Heights.size()) - 1 || gridZ > glm::sqrt(m_Heights.size()) - 1) {
 			return 0.0f;
 		}
 
-		float xCoord = (x / m_GridSpacingX + 1) - gridX;
-		float zCoord = (z / m_GridSpacingZ + 1) - gridZ;
+		float xCoord = (terrainX / m_GridSpacingX + 1) - gridX;
+		float zCoord = (terrainZ / m_GridSpacingZ + 1) - gridZ;
 
 		float height;
 		if (xCoord <= (1 - zCoord)) {
-			height = baryCentricCoordinatesY(glm::vec3(0, m_Heights[gridX + gridZ * 128], 0), // !!! Hardcode value
-											glm::vec3(1, m_Heights[(gridX + 1) + gridZ * 128], 0),
-											glm::vec3(0, m_Heights[gridX + (gridZ + 1) * 128], 1),
+			height = baryCentricCoordinatesY(glm::vec3(0, m_Heights[gridX + gridZ * 128ll], 0), // !!! Hardcode value
+											glm::vec3(1, m_Heights[(gridX + 1ll) + gridZ * 128ll], 0),
+											glm::vec3(0, m_Heights[gridX + (gridZ + 1ll) * 128ll], 1),
 											glm::vec2(xCoord, zCoord));
 		}
 		else {
-			height = baryCentricCoordinatesY(glm::vec3(1, m_Heights[(gridX + 1) + gridZ * 128], 0),
-											glm::vec3(1, m_Heights[(gridX + 1) + (gridZ + 1) * 128], 1),
-											glm::vec3(0, m_Heights[gridX + (gridZ + 1) * 128], 1),
+			height = baryCentricCoordinatesY(glm::vec3(1, m_Heights[(gridX + 1ll) + gridZ * 128ll], 0),
+											glm::vec3(1, m_Heights[(gridX + 1ll) + (gridZ + 1ll) * 128ll], 1),
+											glm::vec3(0, m_Heights[gridX + (gridZ + 1ll) * 128ll], 1),
 											glm::vec2(xCoord, zCoord));
 		}
 
@@ -247,6 +249,14 @@ namespace Agata {
 
 	}
 
+
+
+	TerrainBuilder TerrainBuilder::GenerateParams() {
+
+		return TerrainBuilder();
+
+	}
+
 	TerrainBuilder& TerrainBuilder::RedTexture(const std::string& filePath) {
 
 		redDiffuseTex = filePath;
@@ -271,6 +281,13 @@ namespace Agata {
 	TerrainBuilder& TerrainBuilder::BlackTexture(const std::string& filePath) {
 
 		diffuseTex = filePath;
+		return *this;
+
+	}
+
+	TerrainBuilder& TerrainBuilder::Position(const glm::vec3& position) {
+
+		this->position = position;
 		return *this;
 
 	}
@@ -317,6 +334,27 @@ namespace Agata {
 
 	}
 
+	TerrainBuilder& TerrainBuilder::Width(float width) {
+
+		this->width = width;
+		return *this;
+
+	}
+
+	TerrainBuilder& TerrainBuilder::Depth(float depth) {
+
+		this->depth = depth;
+		return *this;
+
+	}
+
+	TerrainBuilder& TerrainBuilder::Height(float height) {
+
+		this->height = height;
+		return *this;
+
+	}
+
 	TerrainBuilder& TerrainBuilder::TilingFactor(float tilingFactor) {
 
 		this->tilingFactor = tilingFactor;
@@ -327,14 +365,14 @@ namespace Agata {
 	Terrain TerrainBuilder::Build() {
 
 		return Terrain(redDiffuseTex, greenDiffuseTex, blueDiffuseTex, diffuseTex, blendMap, heightMap, redNormalTex, greenNormalTex,
-			blueNormalTex, normalTex, tilingFactor);
+			blueNormalTex, normalTex, position, height, width, depth, tilingFactor);
 
 	}
 
-	Terrain* TerrainBuilder::BuildHeap() {
+	Terrain* TerrainBuilder::BuildNew() {
 
 		return new Terrain(redDiffuseTex, greenDiffuseTex, blueDiffuseTex, diffuseTex, blendMap, heightMap, redNormalTex, greenNormalTex,
-			blueNormalTex, normalTex, tilingFactor);
+			blueNormalTex, normalTex, position, height, width, depth, tilingFactor);
 
 	}
 

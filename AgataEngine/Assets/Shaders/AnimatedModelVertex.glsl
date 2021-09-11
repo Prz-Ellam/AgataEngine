@@ -6,6 +6,10 @@ layout(location = 2) in vec3 a_Normals;
 layout(location = 3) in vec3 a_Tangents;
 layout(location = 4) in vec3 a_Bitangents;
 
+// temporal
+layout(location = 5) in vec4 a_JointID;
+layout(location = 6) in vec4 a_Weights;
+
 out vec2 fs_TexCoords;
 out vec3 fs_ToLightVector;
 out vec3 fs_ToCameraVector;
@@ -17,9 +21,22 @@ uniform vec3 u_CameraPos;
 uniform vec3 u_LightPos;
 uniform vec4 u_Plane;
 
+out vec4 fs_JointID;
+
+uniform mat4 u_Joints[100];
+
 void main() {
 
-	vec4 worldPos = u_Model * vec4(a_Pos, 1.0);
+	fs_JointID = a_JointID;
+
+	mat4 bone_transform = u_Joints[int(a_JointID[0])] * a_Weights[0];
+		 bone_transform += u_Joints[int(a_JointID[1])] * a_Weights[1];
+		 bone_transform += u_Joints[int(a_JointID[2])] * a_Weights[2];
+		 bone_transform += u_Joints[int(a_JointID[3])] * a_Weights[3];
+			
+	vec4 posePosition = bone_transform * vec4(a_Pos, 1.0); // transformed by bones
+
+	vec4 worldPos = u_Model * posePosition;
 	gl_ClipDistance[0] = dot(worldPos, u_Plane);
 	gl_Position = u_Projection * u_View * worldPos;
 

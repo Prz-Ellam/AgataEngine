@@ -113,6 +113,12 @@ namespace Agata {
 
 	}
 
+	ModelBuilder ModelBuilder::generateParams() {
+
+		return ModelBuilder();
+
+	}
+
 	ModelBuilder& ModelBuilder::ModelPath(const std::string& filePath) {
 
 		modelFilePath = filePath;

@@ -62,12 +62,6 @@ namespace Agata {
 
 	}
 
-	void GrassManager::batchGrassUnits() {
-
-	
-		
-	}
-
 	void GrassManager::addTexture(const std::string& filePath) {
 
 		m_Textures.emplace_back(filePath);

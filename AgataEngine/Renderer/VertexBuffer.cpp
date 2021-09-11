@@ -34,6 +34,15 @@ namespace Agata {
 
 	}
 
+	VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept {
+
+		uint32_t aux = this->m_ID;
+		this->m_ID = other.m_ID;
+		other.m_ID = aux;
+		return *this;
+
+	}
+
 	void VertexBuffer::bind() const {
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_ID);

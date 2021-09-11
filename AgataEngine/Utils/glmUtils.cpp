@@ -47,6 +47,29 @@ glm::mat4 transformationMatrix(const glm::vec3& pos, const glm::quat& quat, cons
 
 }
 
+glm::mat4 transformationMatrix(const glm::vec3& pos, const glm::vec3& scale) {
+
+	glm::mat4 exit;
+	exit[0][0] = scale.x;
+	exit[0][1] = scale.x;
+	exit[0][2] = scale.x;
+	exit[0][3] = 0;
+	exit[1][0] = scale.y;
+	exit[1][1] = scale.y;
+	exit[1][2] = scale.y;
+	exit[1][3] = 0;
+	exit[2][0] = scale.z;
+	exit[2][1] = scale.z;
+	exit[2][2] = scale.z;
+	exit[2][3] = 0;
+	exit[3][0] = pos.x;
+	exit[3][1] = pos.y;
+	exit[3][2] = pos.z;
+	exit[3][3] = 1;
+	return exit;
+
+}
+
 float baryCentricCoordinatesY(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const glm::vec2& pos) {
 
 	float det = (p2.z - p3.z) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.z - p3.z);

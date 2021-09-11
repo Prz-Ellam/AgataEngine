@@ -18,6 +18,7 @@ namespace Agata {
 		Texture2D(const std::string& filePath, DefaultTex type);
 		Texture2D(const Texture2D& other) = delete;
 		Texture2D(Texture2D&& other) noexcept;
+		Texture2D& operator=(const Texture2D& other) = delete;
 		~Texture2D();
 		uint32_t bind(uint32_t slot) const;
 		void unbind() const;

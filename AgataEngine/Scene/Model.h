@@ -15,18 +15,12 @@ namespace Agata {
 
 	class Model {
 	public:
+		friend class ModelBuilder;
 		// Model(const std::string& filePath);
 		Model(const std::string& filePath, const std::string& diffuseTex, const std::string& specularTex, const std::string& normalTex,
 			const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale,
 			const glm::vec3& ambientMaterial, const glm::vec3& diffuseMaterial, const glm::vec3& specularMaterial,
 			float shininessMaterial);
-		// Model(const ModelType& modelType);
-
-		Model(std::string&& filePath, std::string&& diffuseTex, std::string&& specularTex, std::string&& normalTex,
-			glm::vec3&& position, glm::vec3&& rotation, glm::vec3&& scale,
-			glm::vec3&& ambientMaterial, glm::vec3&& diffuseMaterial, glm::vec3&& specularMaterial,
-			float shininessMaterial);
-
 
 		~Model();
 		glm::mat4 getTransformation() const;
@@ -37,7 +31,7 @@ namespace Agata {
 		Material& getMaterialRef() { return m_Material; }
 
 		void draw();
-		void draw(std::shared_ptr<Shader> shader, Light& light, const glm::vec4& clipDistance = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+		void draw(std::shared_ptr<Shader> shader, Light& light, const glm::vec4& clipDistance = glm::vec4(0.0f));
 	private:
 		Mesh* m_Mesh;
 		Material m_Material;
@@ -51,6 +45,9 @@ namespace Agata {
 	class ModelBuilder {
 	public:
 		ModelBuilder() = default;
+
+		static ModelBuilder generateParams();
+
 		ModelBuilder& ModelPath(const std::string&);
 		ModelBuilder& DiffuseTexture(const std::string&);
 		ModelBuilder& SpecularTexture(const std::string&);

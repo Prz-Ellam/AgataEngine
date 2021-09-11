@@ -25,7 +25,6 @@ namespace Agata {
 		~GrassManager();
 
 		void addGrassUnit(const glm::vec3& position, const glm::vec3& scale, uint32_t texIndex);
-		void batchGrassUnits();
 		void addTexture(const std::string& filePath);
 
 

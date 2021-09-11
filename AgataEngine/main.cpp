@@ -262,8 +262,6 @@
 //
 //}
 
-#include <string.h>
-
 int main(int argc, char** argv) {
 
 	Agata::Scene* scene = new Agata::Scene3D();

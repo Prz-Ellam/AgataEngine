@@ -19,11 +19,7 @@ namespace Agata {
 
 	class AnimatedModel {
 	public:
-		AnimatedModel(const std::string& filePath, const std::string& diffuseTex, const std::string& specularTex, const std::string& normalTex,
-			const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale,
-			const glm::vec3& ambientMaterial, const glm::vec3& diffuseMaterial, const glm::vec3& specularMaterial,
-			float shininessMaterial);
-
+		friend class AnimatedModelBuilder;
 		glm::mat4 getTransformation() const;
 		void setPosition(const glm::vec3& position);
 		void setRotation(const glm::vec3& rotation);
@@ -33,6 +29,10 @@ namespace Agata {
 		void draw(std::shared_ptr<Shader> shader, Light& light, float ts, const glm::vec4& clipDistance = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 
 	private:
+		AnimatedModel(const std::string& filePath, const std::string& diffuseTex, const std::string& specularTex, const std::string& normalTex,
+			const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale,
+			const glm::vec3& ambientMaterial, const glm::vec3& diffuseMaterial, const glm::vec3& specularMaterial,
+			float shininessMaterial);
 		Material m_Material;
 		//Joint m_RootJoint;
 		uint32_t m_JointCount;
@@ -66,6 +66,9 @@ namespace Agata {
 	class AnimatedModelBuilder {
 	public:
 		AnimatedModelBuilder() = default;
+
+		static AnimatedModelBuilder GenerateParams();
+
 		AnimatedModelBuilder& ModelPath(const std::string&);
 		AnimatedModelBuilder& DiffuseTexture(const std::string&);
 		AnimatedModelBuilder& SpecularTexture(const std::string&);
@@ -78,7 +81,7 @@ namespace Agata {
 		AnimatedModelBuilder& SpecularMaterial(const glm::vec3&);
 		AnimatedModelBuilder& ShininessMaterial(float);
 		AnimatedModel Build();
-		AnimatedModel* BuildHeap();
+		AnimatedModel* BuildNew();
 	private:
 		std::string modelFilePath;
 		std::string diffuseTexture;

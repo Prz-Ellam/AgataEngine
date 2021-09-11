@@ -13,6 +13,7 @@ namespace Agata {
 		VertexArray();
 		VertexArray(const VertexArray& other) = delete;
 		VertexArray(VertexArray&& other) noexcept;
+		VertexArray& operator=(const VertexArray& other) = delete;
 		~VertexArray();
 
 		void bind() const;

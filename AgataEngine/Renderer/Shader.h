@@ -14,6 +14,7 @@ namespace Agata {
 		Shader(const std::string& vertexFilePath, const std::string& fragmentFilePath);
 		Shader(const Shader& other) = delete;
 		Shader(Shader&& other) noexcept;
+		Shader& operator=(const Shader& other) = delete;
 		~Shader();
 
 		void bind() const;

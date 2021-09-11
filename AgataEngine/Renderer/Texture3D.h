@@ -11,6 +11,7 @@ namespace Agata {
 			const std::string& front, const std::string& back);
 		Texture3D(const Texture3D& other) = delete;
 		Texture3D(Texture3D&& other) noexcept;
+		Texture3D& operator=(const Texture3D& other) = delete;
 		~Texture3D();
 		uint32_t bind(uint32_t slot) const;
 		void unbind() const;

@@ -3,7 +3,6 @@
 #include "Loader.h"
 #include "Log.h"
 #include "glmUtils.h"
-#include <bitset>
 
 namespace Agata {
 
@@ -364,8 +363,11 @@ namespace Agata {
 
 
 
+	AnimatedModelBuilder AnimatedModelBuilder::GenerateParams() {
 
+		return AnimatedModelBuilder();
 
+	}
 
 	AnimatedModelBuilder& AnimatedModelBuilder::ModelPath(const std::string& filePath) {
 
@@ -451,7 +453,7 @@ namespace Agata {
 
 	}
 
-	AnimatedModel* AnimatedModelBuilder::BuildHeap() {
+	AnimatedModel* AnimatedModelBuilder::BuildNew() {
 
 		return new AnimatedModel(modelFilePath, diffuseTexture, specularTexture, normalTexture, position, rotation, scale,
 			ambientMaterial, diffuseMaterial, specularMaterial, shininessMaterial);
