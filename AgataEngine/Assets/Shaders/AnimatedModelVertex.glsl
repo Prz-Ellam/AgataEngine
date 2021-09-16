@@ -5,8 +5,6 @@ layout(location = 1) in vec2 a_TexCoords;
 layout(location = 2) in vec3 a_Normals;
 layout(location = 3) in vec3 a_Tangents;
 layout(location = 4) in vec3 a_Bitangents;
-
-// temporal
 layout(location = 5) in vec4 a_JointID;
 layout(location = 6) in vec4 a_Weights;
 
@@ -21,13 +19,9 @@ uniform vec3 u_CameraPos;
 uniform vec3 u_LightPos;
 uniform vec4 u_Plane;
 
-out vec4 fs_JointID;
-
 uniform mat4 u_Joints[100];
 
 void main() {
-
-	fs_JointID = a_JointID;
 
 	mat4 bone_transform = u_Joints[int(a_JointID[0])] * a_Weights[0];
 		 bone_transform += u_Joints[int(a_JointID[1])] * a_Weights[1];

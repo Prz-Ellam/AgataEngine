@@ -33,6 +33,7 @@ namespace Agata {
 			case DataType::Float2:	return sizeof(float) * 2;
 			case DataType::Float3:	return sizeof(float) * 3;
 			case DataType::Float4:	return sizeof(float) * 4;
+			case DataType::Int:     return sizeof(int);
 			case DataType::Int3:	return sizeof(int) * 3;
 		}
 
@@ -45,6 +46,7 @@ namespace Agata {
 			case DataType::Float2:	return 2;
 			case DataType::Float3:	return 3;
 			case DataType::Float4:	return 4;
+			case DataType::Int:     return 1;
 			case DataType::Int3:	return 3;
 		}
 

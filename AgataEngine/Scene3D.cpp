@@ -59,19 +59,19 @@ namespace Agata {
 
 		{
 			Agata::Timer modelBuilder("ModelBuilder");
-			//model = ModelBuilder().
-			//	ModelPath("Assets\\sphere.obj"s).
-			//	Position(glm::vec3(6.10f, 2.4f, 11.12f)).
-			//	Rotation(glm::vec3(0.0f, 0.0f, 0.0f)).
-			//	Scale(glm::vec3(30.0f)).
-			//	DiffuseTexture("Assets\\diffuse.jpg"s).
-			//	//SpecularTexture("Assets\\barrelSpecular.png"s).
-			//	//NormalTexture("Assets\\normal.png"s).
-			//	AmbientMaterial(glm::vec3(0.75f)).
-			//	DiffuseMaterial(glm::vec3(0.85f)).
-			//	SpecularMaterial(glm::vec3(1.0f)).
-			//	ShininessMaterial(32).
-			//	BuildHeap();
+			model = ModelBuilder::GenerateParams().
+				ModelPath("Assets\\lantern.obj"s).
+				Position(glm::vec3(6.10f, 3.4f, 10.12f)).
+				Rotation(glm::vec3(0.0f, 0.0f, 0.0f)).
+				Scale(glm::vec3(5.0f)).
+				DiffuseTexture("Assets\\sand.png"s).
+				//SpecularTexture("Assets\\barrelSpecular.png"s).
+				//NormalTexture("Assets\\normal.png"s).
+				AmbientMaterial(glm::vec3(0.75f)).
+				DiffuseMaterial(glm::vec3(0.85f)).
+				SpecularMaterial(glm::vec3(1.0f)).
+				ShininessMaterial(32).
+				BuildHeap();
 
 			animatedModel = AnimatedModelBuilder::GenerateParams().
 				ModelPath("Assets\\Character.fbx"s).
@@ -113,7 +113,7 @@ namespace Agata {
 			skybox = new Skybox("Assets//Images//right.png", "Assets//Images//left.png", "Assets//Images//top.png",
 				"Assets//Images//bottom.png", "Assets//Images//front.png", "Assets//Images//back.png", 500.0f);
 		}
-		//billboard = new Billboard("grass.png"s, glm::vec3(4.87f, 1.735f, 8.7f), glm::vec3(0.4f));
+		//billboard = new Billboard("grass5.png"s, glm::vec3(4.87f, 1.735f, 8.7f), glm::vec3(0.4f));
 
 		fire = new Fire("Assets\\rampFire.gif"s, "Assets\\alphaFire.gif"s, "Assets\\dudv.png"s, "Assets\\fireNoise.png"s, 
 			glm::vec3(11.302f, 2.518f, 12.408f), glm::vec3(1.0f));
@@ -131,6 +131,7 @@ namespace Agata {
 			shaderZoom = std::make_shared<Shader>("Assets//Shaders//ZoomVertex.glsl", "Assets//Shaders//ZoomFragment.glsl");
 			shaderGrass = std::make_shared<Shader>("Assets//Shaders//GrassVertex.glsl", "Assets//Shaders//GrassFragment.glsl");
 			shaderAnimatedModel = std::make_shared<Shader>("Assets//Shaders//AnimatedModelVertex.glsl", "Assets//Shaders//ModelFragment.glsl");
+			shaderCubeMap = std::make_shared<Shader>("Assets//Shaders//CubeMapVertex.glsl", "Assets//Shaders//CubeMapFragment.glsl");
 		}
 
 		{
@@ -147,8 +148,6 @@ namespace Agata {
 		grass->addTexture("grass.png"s);
 		grass->addTexture("grass5.png"s);
 
-		fbo = new FrameBuffer(m_Window->getWidth(), m_Window->getHeight());
-
 	}
 
 	void Scene3D::shutdown() {
@@ -160,7 +159,7 @@ namespace Agata {
 		delete animatedModel;
 		delete terrain;
 		delete skybox;
-		//delete billboard;
+		delete billboard;
 		delete fire;
 		delete water;
 		delete light;
@@ -240,19 +239,6 @@ namespace Agata {
 			m_InvertCamera->move(m_Window->getHandler(), *terrain, dt);
 			m_Camera->move(m_Window->getHandler(), *terrain, dt);
 
-
-			fbo->bind(m_Window->getWidth(), m_Window->getHeight());
-			m_Renderer.clear(0.1f, 0.1f, 0.1f, 1.0f);
-			skybox->draw(shaderSkybox, *light);
-			terrain->draw(shaderTerrain, *light);
-			animatedModel->draw(shaderAnimatedModel, *light, ts);
-			fire->draw(shaderFire, dt);
-			//billboard->draw(shaderGrass, *light, dt);
-			grass->draw(shaderGrass, *light, dt);
-			water->draw(shaderWater, *light);
-			fbo->unbind();
-
-
 			glEnable(GL_CLIP_DISTANCE0);
 
 			float distance = 2 * (m_Camera->getPosition().y - water->getHeight());
@@ -290,9 +276,16 @@ namespace Agata {
 			terrain->draw(shaderTerrain, *light);
 			animatedModel->draw(shaderAnimatedModel, *light, ts);
 			fire->draw(shaderFire, dt);
-			//billboard->draw(shaderGrass, *light, dt);
+			//model->draw(shaderModel, *light);
+			//billboard->draw(shaderBill, *light, dt);
+			shaderGrass->bind();
+			shaderGrass->sendMat4("u_Model", glm::mat4(1.0f));
 			grass->draw(shaderGrass, *light, dt);
 			water->draw(shaderWater, *light);
+
+			shaderCubeMap->bind();
+			shaderCubeMap->sendInt1("u_CubeMap", skybox->getTexture().bind(0));
+			model->draw(shaderCubeMap, *light);
 
 			//m_Camera->setSensitivity(124.44444f);
 			//m_Camera->getPerspectiveCameraPropsRef().fov = 7.0f;

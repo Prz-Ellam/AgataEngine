@@ -50,6 +50,29 @@ namespace Agata {
 
 	}
 
+	Mesh::Mesh(const std::vector<GrassVertex>& vertex, const std::vector<uint32_t>& indices) {
+
+		m_VAO = new VertexArray();
+
+		m_VertexCount = vertex.size();
+		m_VBO = new VertexBuffer(vertex.data(), m_VertexCount * sizeof(GrassVertex));
+		m_IndexCount = indices.size();
+		m_IBO = new IndexBuffer(indices.data(), m_IndexCount * sizeof(uint32_t));
+
+		std::vector<BufferLayout> layouts;
+		layouts.reserve(6);
+		layouts.emplace_back(0, DataType::Float3);
+		layouts.emplace_back(1, DataType::Float2);
+		layouts.emplace_back(2, DataType::Float3);
+		layouts.emplace_back(3, DataType::Float3);
+		layouts.emplace_back(4, DataType::Float3);
+		layouts.emplace_back(5, DataType::Float);
+
+		m_VAO->attachVertexBuffer(m_VBO, layouts);
+		m_VAO->attachIndexBuffer(m_IBO);
+
+	}
+
 
 	Mesh::Mesh(const std::vector<glm::vec3>& vertex, const std::vector<uint32_t>& indices) {
 

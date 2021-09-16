@@ -14,6 +14,7 @@ namespace Agata {
 		Float2,
 		Float3,
 		Float4,
+		Int,
 		Int3
 	};
 

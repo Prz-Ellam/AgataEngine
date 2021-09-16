@@ -3,7 +3,7 @@
 in vec2 fs_TexCoords;
 in vec3 fs_UnitNormal;
 in vec3 fs_ToLight;
-flat in int fs_TexIndex;
+flat in float fs_TexIndex;
 
 out vec4 o_Color;
 
@@ -18,7 +18,9 @@ void main() {
 	diffuseFactor = max(diffuseFactor, 0.0f);
 	vec4 diffuse = diffuseFactor * u_LightColour;
 
-	vec4 texColor = texture(u_Textures[fs_TexIndex], fs_TexCoords);
+	int texIndex = int(fs_TexIndex);
+	vec4 texColor = texture(u_Textures[texIndex], fs_TexCoords);
+
 	if (texColor.a < 0.5f) {
 		discard;
 	}

@@ -113,7 +113,7 @@ namespace Agata {
 
 	}
 
-	ModelBuilder ModelBuilder::generateParams() {
+	ModelBuilder ModelBuilder::GenerateParams() {
 
 		return ModelBuilder();
 

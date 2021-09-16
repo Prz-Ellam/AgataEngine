@@ -53,8 +53,8 @@ namespace Agata {
 		std::shared_ptr<Shader> shaderFire;
 		std::shared_ptr<Shader> shaderWater;
 		std::shared_ptr<Shader> shaderZoom;
-		//std::shared_ptr<Shader> shaderFire;
-		FrameBuffer* fbo;
+		std::shared_ptr<Shader> shaderCubeMap;
+		Mesh* m_Grass;
 		Camera* m_Camera;
 		Camera* m_InvertCamera;
 		Water* water;

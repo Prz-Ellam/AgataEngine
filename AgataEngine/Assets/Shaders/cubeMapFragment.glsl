@@ -12,8 +12,8 @@ uniform mat4 u_RotCubeMap;
 
 void main() {
 
-	vec3 reflectionVector = reflect(fs_UnitView, fs_UnitNormal);
-	reflectionVector = (u_RotCubeMap * vec4(reflectionVector, 1.0f)).xyz;
+	vec3 reflectionVector = refract(fs_UnitView, fs_UnitNormal, 1.0f/1.33f);
+	//reflectionVector = (u_RotCubeMap * vec4(reflectionVector, 1.0f)).xyz;
 
 	vec4 reflectionColour = texture(u_CubeMap, reflectionVector);
 

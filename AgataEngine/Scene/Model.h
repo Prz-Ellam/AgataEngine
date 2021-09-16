@@ -46,7 +46,7 @@ namespace Agata {
 	public:
 		ModelBuilder() = default;
 
-		static ModelBuilder generateParams();
+		static ModelBuilder GenerateParams();
 
 		ModelBuilder& ModelPath(const std::string&);
 		ModelBuilder& DiffuseTexture(const std::string&);

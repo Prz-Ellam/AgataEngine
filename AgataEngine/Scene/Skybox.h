@@ -29,6 +29,9 @@ namespace Agata {
 		void setRotation(float rotation);
 		void updateRotation(float rotation);
 
+		Texture3D& getTexture() { return m_Texture; }
+		
+
 	private:
 		Texture3D m_Texture;
 		Mesh* m_Mesh;

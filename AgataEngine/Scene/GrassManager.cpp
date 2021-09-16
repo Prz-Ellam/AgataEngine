@@ -10,6 +10,8 @@ namespace Agata {
 
 		m_VAO = new VertexArray();
 
+		auto [vertices, indices] = Loader::loadGrass();
+
 		m_VBO = new VertexBuffer(maxGrassCount * 12 * sizeof(GrassVertex));
 		m_IBO = new IndexBuffer(maxGrassCount * 18 * sizeof(uint32_t));
 
@@ -46,7 +48,7 @@ namespace Agata {
 		for (GrassVertex& vertex : vertices) {
 			vertex.coords = transformationMatrix(position, glm::vec3(1.0f), scale) * glm::vec4(vertex.coords, 1.0f);
 			//vertex.normals = transformationMatrix(position, glm::vec3(1.0f), scale) * glm::vec4(vertex.normals, 1.0f);
-			vertex.texIndex = texIndex;
+			vertex.texIndex = (float)texIndex;
 			vertex.displacement = random;
 		}
 

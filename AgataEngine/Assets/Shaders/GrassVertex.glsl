@@ -1,4 +1,4 @@
-#version 330 core
+#version 400 core
 
 layout (location = 0) in vec3 a_Pos;
 layout (location = 1) in vec2 a_TexCoords;
@@ -11,7 +11,7 @@ layout (location = 6) in float a_Displacement;
 out vec2 fs_TexCoords;
 out vec3 fs_UnitNormal;
 out vec3 fs_ToLight;
-out int fs_TexIndex;
+flat out float fs_TexIndex;
 
 uniform mat4 u_View;
 uniform mat4 u_Projection;
@@ -30,7 +30,7 @@ void main() {
 	gl_Position = u_Projection * u_View * worldPos;
 
 	fs_TexCoords = a_TexCoords;
-	fs_TexIndex = int(a_TexIndex);
+	fs_TexIndex = a_TexIndex;
 
 	fs_UnitNormal = normalize(vec3(vec4(a_Normals, 0.0f)));
 	fs_ToLight = normalize(u_LightPos - worldPos.xyz);
