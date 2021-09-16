@@ -51,6 +51,7 @@ namespace Agata {
 		Camera(const PerspectiveCameraProps& properties, float speed, float sensitivity);
 		void update();
 		void move(GLFWwindow* window, Terrain& terrain, float deltaTime);
+		void move(GLFWwindow* window, int joystickID, Terrain& terrain, float deltaTime);
 		glm::vec3& getPosition();
 
 		void move(GLFWwindow* window, MouseMoveEvent e);

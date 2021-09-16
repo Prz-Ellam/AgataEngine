@@ -11,6 +11,7 @@
 #include "Events/MouseMoveEvent.h"
 #include "Events/MouseScrollEvent.h"
 #include "Events/KeyEvent.h"
+#include "Events/JoyStickEvent.h"
 
 using WindowResizeEventFn = std::function<void(WindowResizeEvent)>;
 using WindowMoveEventFn = std::function<void(WindowMoveEvent)>;
@@ -18,6 +19,7 @@ using WindowCloseEventFn = std::function<void(WindowCloseEvent)>;
 using MouseMoveEventFn = std::function<void(MouseMoveEvent)>;
 using MouseScrollEventFn = std::function<void(MouseScrollEvent)>;
 using KeyEventFn = std::function<void(KeyEvent)>;
+using JoyStickEventFn = std::function<void(JoyStickEvent)>;
 
 class Window {
 public:
@@ -46,6 +48,7 @@ public:
 	void setMouseMoveEventHandler(MouseMoveEventFn handler);
 	void setScrollEventHandler(MouseScrollEventFn handler);
 	void setKeyEventHandler(KeyEventFn handler);
+	void setJoyStickEventHandler(JoyStickEventFn handler);
 
 private:
 	GLFWwindow* m_Window;
@@ -60,6 +63,7 @@ private:
 		MouseMoveEventFn mouseMoveEventHandler;
 		MouseScrollEventFn mouseScrollEventHandler;
 		KeyEventFn keyEventHandler;
+		JoyStickEventFn joystickEventHandler;
 	} m_WindowData;
 
 };

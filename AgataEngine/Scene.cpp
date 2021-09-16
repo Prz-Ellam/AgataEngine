@@ -57,6 +57,10 @@ namespace Agata {
 
 	}
 
+	void Scene::joyStickEvent(JoyStickEvent e) {
+
+	}
+
 	void Scene::imGuiEvent(bool a) {
 
 	}

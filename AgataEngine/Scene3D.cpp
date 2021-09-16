@@ -176,6 +176,7 @@ namespace Agata {
 		m_Window->setWindowMoveEventHandler(EVENT_FN(Scene3D::windowMoveEvent));
 		m_Window->setMouseMoveEventHandler(EVENT_FN(Scene3D::mouseMoveEvent));
 		m_Window->setKeyEventHandler(EVENT_FN(Scene3D::keyEvent));
+		m_Window->setJoyStickEventHandler(EVENT_FN(Scene3D::joyStickEvent));
 
 	}
 
@@ -236,8 +237,8 @@ namespace Agata {
 
 			float ts = glfwGetTime();
 
-			m_InvertCamera->move(m_Window->getHandler(), *terrain, dt);
-			m_Camera->move(m_Window->getHandler(), *terrain, dt);
+			m_InvertCamera->move(m_Window->getHandler(), GLFW_JOYSTICK_1, *terrain, dt);
+			m_Camera->move(m_Window->getHandler(), GLFW_JOYSTICK_1, *terrain, dt);
 
 			glEnable(GL_CLIP_DISTANCE0);
 
@@ -344,6 +345,17 @@ namespace Agata {
 			else {
 				Input::setCursorMode(m_Window, CursorMode::Normal);
 			}
+		}
+
+	}
+
+	void Scene3D::joyStickEvent(JoyStickEvent e) {
+
+		if (e.getEvent() == GLFW_CONNECTED) {
+			Log::info("Connected");
+		}
+		else if (e.getEvent() == GLFW_DISCONNECTED) {
+			Log::info("Disconnected");
 		}
 
 	}

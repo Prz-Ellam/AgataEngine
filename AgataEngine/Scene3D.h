@@ -34,6 +34,7 @@ namespace Agata {
 		void windowMoveEvent(WindowMoveEvent e) override;
 		void mouseMoveEvent(MouseMoveEvent e) override;
 		void keyEvent(KeyEvent e) override;
+		void joyStickEvent(JoyStickEvent e) override;
 		void imGuiEvent(bool a) override;
 	private:
 		ImGuiLayer* imGui;

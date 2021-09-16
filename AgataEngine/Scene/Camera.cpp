@@ -142,6 +142,83 @@ namespace Agata {
 
 	}
 
+	void Camera::move(GLFWwindow* window, int joystickID, Terrain& terrain, float deltaTime) {
+
+		m_ForwardAcceleration = 0.0f;
+		m_RightAcceleration = 0.0f;
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+			m_ForwardAcceleration += m_Speed;
+		}
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+			m_ForwardAcceleration -= m_Speed;
+		}
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+			m_RightAcceleration -= m_Speed;
+		}
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+			m_RightAcceleration += m_Speed;
+		}
+
+		m_YawAcceleration = 0.0f;
+		m_PitchAcceleration = 0.0f;
+		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+			m_YawAcceleration -= m_Sensitivity;
+		}
+		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+			m_YawAcceleration += m_Sensitivity;
+		}
+		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+			m_PitchAcceleration += m_Sensitivity * m_PitchDirection;
+		}
+		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+			m_PitchAcceleration -= m_Sensitivity * m_PitchDirection;
+		}
+
+		if (glfwJoystickPresent(joystickID)) {
+			int count;
+			const float* axis = glfwGetJoystickAxes(joystickID, &count);
+
+			if (axis[0] > 0.19 || axis[0] < -0.19)
+				m_RightAcceleration += axis[0] * m_Speed;
+			if (axis[1] > 0.19 || axis[1] < -0.19)
+				m_ForwardAcceleration -= axis[1] * m_Speed;
+			if (axis[2] > 0.19 || axis[2] < -0.19)
+				m_YawAcceleration += axis[2] * m_Sensitivity;
+			if (axis[3] > 0.19 || axis[3] < -0.19)
+				m_PitchAcceleration -= axis[3] * m_Sensitivity * m_PitchDirection;
+		}
+
+		m_ForwardAcceleration -= m_ForwardVelocity * 10.0f;
+		m_Position += (m_ForwardVelocity * deltaTime + m_ForwardAcceleration * deltaTime * deltaTime * 0.5f) * m_Forward;
+		m_ForwardVelocity = m_ForwardVelocity + m_ForwardAcceleration * deltaTime;
+
+		m_RightAcceleration -= m_RightVelocity * 10.0f;
+		m_Position += (m_RightVelocity * deltaTime + m_RightVelocity * deltaTime * deltaTime * 0.5f) * m_Right;
+		m_RightVelocity = m_RightVelocity + m_RightAcceleration * deltaTime;
+
+		m_PitchAcceleration -= m_PitchVelocity * 12.0f;
+		m_Pitch = glm::clamp(m_Pitch + m_PitchVelocity * deltaTime + m_PitchAcceleration * deltaTime * deltaTime * 0.5f, -89.0f, 89.0f);
+		m_PitchVelocity = m_PitchVelocity + m_PitchAcceleration * deltaTime;
+
+		m_YawAcceleration -= m_YawVelocity * 12.0f;
+		m_Yaw = m_Yaw + m_YawVelocity * deltaTime + m_YawAcceleration * deltaTime * deltaTime * 0.5f;
+		m_YawVelocity = m_YawVelocity + m_YawAcceleration * deltaTime;
+
+		glm::vec3 direction;
+		direction.x = glm::cos(glm::radians(m_Yaw)) * glm::cos(glm::radians(m_Pitch));
+		direction.y = glm::sin(glm::radians(m_Pitch));
+		direction.z = glm::sin(glm::radians(m_Yaw)) * glm::cos(glm::radians(m_Pitch));
+
+		m_Forward = glm::normalize(direction);
+		m_Right = glm::normalize(glm::cross(m_Forward, m_Up));
+
+		m_Position.y = terrain.getHeight(m_Position.x, m_Position.z) + 0.6f;
+
+		m_View = glm::lookAt(m_Position, m_Position + m_Forward, m_Up);
+		m_Projection = glm::perspective(glm::radians(m_Properties.fov), m_Properties.aspect, m_Properties.nearPlane, m_Properties.farPlane);
+
+	}
+
 	void Camera::move(GLFWwindow* window, MouseMoveEvent e) {
 
 		if (firstMouse) {

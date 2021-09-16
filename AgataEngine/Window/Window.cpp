@@ -24,6 +24,7 @@ Window::Window(uint32_t width, uint32_t height, const std::string& title) {
 	glfwMakeContextCurrent(m_Window);
 
 	glfwSetWindowUserPointer(m_Window, &m_WindowData);
+	glfwSetJoystickUserPointer(1, m_Window);
 
 }
 
@@ -48,6 +49,7 @@ Window::Window() {
 	glfwMakeContextCurrent(m_Window);
 
 	glfwSetWindowUserPointer(m_Window, &m_WindowData);
+	glfwSetJoystickUserPointer(1, m_Window);
 
 }
 
@@ -189,6 +191,19 @@ void Window::setKeyEventHandler(KeyEventFn handler) {
 
 		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 		data.keyEventHandler(KeyEvent(key, action));
+
+	});
+
+}
+
+void Window::setJoyStickEventHandler(JoyStickEventFn handler) {
+
+	m_WindowData.joystickEventHandler = handler;
+
+	glfwSetJoystickCallback([](int ID, int event) {
+
+		WindowData& data = *(WindowData*)glfwGetJoystickUserPointer(1);
+		data.joystickEventHandler(JoyStickEvent(ID, event));
 
 	});
 
