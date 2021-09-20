@@ -2,7 +2,7 @@
 #include "Scene3D.h"
 #include <Windows.h>
 #include <stb/stb_image.cpp>
-
+#include <stb/stb_image_write.cpp>
 //int Nomain() {
 //
 //	Window window = Window(1280, 720, "Mi ventana");

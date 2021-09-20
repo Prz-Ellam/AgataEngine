@@ -22,6 +22,10 @@ void main() {
 	vec2 refractionTexCoords = vec2(ndc.x, ndc.y);
 	vec2 reflectionTexCoords = vec2(ndc.x, 1 - ndc.y);
 
+	float depth = texture(u_DepthMap, refractionTexCoords).r;
+	float distance = 2.0f * 0.1f * 1000.0f / (1000.0f + 0.1f - (2.0f  * depth - 1.0f) * (1000.0f - 0.1f));
+	float waterDepth = distance - gl_FragCoord.z;
+
 	// Distortion
 	vec4 dudvMap = texture(u_dudv, vec2(fs_TexCoords.x + u_MoveFactor, fs_TexCoords.y));
 	vec2 distortedTexCoords = dudvMap.rg * 0.2f; // tiling factor
@@ -45,16 +49,17 @@ void main() {
 	vec3 reflectLight = reflect(fs_LightDirection, normal);
 	float specularScalar = dot(reflectLight, fs_ToCameraVector);
 	specularScalar = max(specularScalar, 0.0f);
-	specularScalar = pow(specularScalar, 20);
+	specularScalar = pow(specularScalar, 32);
 	vec3 specularLight = u_LightColour * specularScalar * reflectivity;
 
 	// Fresnel effect
 	float reflectivityFactor = dot(fs_ToCameraVector, vec3(0.0f, 1.0f, 0.0f));
-	reflectivityFactor = pow(reflectivityFactor, 0.3f);
+	reflectivityFactor = pow(reflectivityFactor, 0.5f);
 
 	// Final color output
 	o_FragColor = mix(reflection, refraction, reflectivityFactor);
-	o_FragColor = mix(o_FragColor, vec4(0.0f, 0.3f, 0.5f, 1.0f), 0.2f) + vec4(specularLight, 0.0f);
+	o_FragColor = mix(o_FragColor, vec4(0.0f, 0.3f, 0.5f, 1.0f), 0.15f) + vec4(specularLight, 0.0f);
+	//o_FragColor.a = clamp(depth, 0.0f, 1.0f);
 
 	//float depth = texture(u_DepthMap, refractionTexCoords).r;
 	//float distance = 2.0f * 0.1f * 100.0f / (100.0f + 0.1f - (2.0f  * depth - 1.0f) * (100.0f - 0.1f));
@@ -62,5 +67,5 @@ void main() {
 	//float waterDistance = 2.0f * 0.1f * 100.0f / (100.0f + 0.1f - (2.0f  * depth - 1.0f) * (100.0f - 0.1f));
 	//float waterDepth = distance - waterDistance;
 	//
-	//o_Color = vec4(vec3(waterDepth / 50.0f), 1.0f);
+	//o_FragColor = vec4(vec3(waterDepth/10.0f), 1.0f);
 }

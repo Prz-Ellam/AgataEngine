@@ -37,6 +37,7 @@ namespace Agata {
 		void joyStickEvent(JoyStickEvent e) override;
 		void imGuiEvent(bool a) override;
 	private:
+		bool imGuiActive = true;
 		ImGuiLayer* imGui;
 		Model* model;
 		AnimatedModel* animatedModel;
@@ -55,7 +56,7 @@ namespace Agata {
 		std::shared_ptr<Shader> shaderWater;
 		std::shared_ptr<Shader> shaderZoom;
 		std::shared_ptr<Shader> shaderCubeMap;
-		Mesh* m_Grass;
+		Texture3D* texture;
 		Camera* m_Camera;
 		Camera* m_InvertCamera;
 		Water* water;
@@ -64,7 +65,7 @@ namespace Agata {
 		float lightAngle;
 	};
 
+	void saveImage(std::string filepath, GLFWwindow* w);
 }
-
 
 #endif

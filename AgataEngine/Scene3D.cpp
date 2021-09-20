@@ -9,6 +9,7 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
+#include <stb/stb_image_write.h>
 
 namespace Agata {
 
@@ -60,11 +61,11 @@ namespace Agata {
 		{
 			Agata::Timer modelBuilder("ModelBuilder");
 			model = ModelBuilder::GenerateParams().
-				ModelPath("Assets\\lantern.obj"s).
-				Position(glm::vec3(6.10f, 3.4f, 10.12f)).
+				ModelPath("Assets\\tea.obj"s).
+				Position(glm::vec3(8.963f, 2.0f, 13.572f)).
 				Rotation(glm::vec3(0.0f, 0.0f, 0.0f)).
-				Scale(glm::vec3(5.0f)).
-				DiffuseTexture("Assets\\sand.png"s).
+				Scale(glm::vec3(2.0f)).
+				DiffuseTexture("Assets\\diffuse.jpg"s).
 				//SpecularTexture("Assets\\barrelSpecular.png"s).
 				//NormalTexture("Assets\\normal.png"s).
 				AmbientMaterial(glm::vec3(0.75f)).
@@ -107,11 +108,15 @@ namespace Agata {
 				Depth(20.0f).
 				BuildNew();
 		}
-
+		texture = new Texture3D("01.bmp"s, "03.bmp"s, "05.bmp"s, "07.bmp"s, "02.bmp"s, "04.bmp"s);
 		{
 			Agata::Timer skyboxBuilder("SkyBoxBuilder");
-			skybox = new Skybox("Assets//Images//right.png", "Assets//Images//left.png", "Assets//Images//top.png",
-				"Assets//Images//bottom.png", "Assets//Images//front.png", "Assets//Images//back.png", 500.0f);
+			//skybox = new Skybox("Assets//Images//right.png", "Assets//Images//left.png", "Assets//Images//top.png",
+			//	"Assets//Images//bottom.png", "Assets//Images//front.png", "Assets//Images//back.png", 500.0f);
+			//skybox = new Skybox("Assets//Images//sky103ft.png", "Assets//Images//sky103bk.png", "Assets//Images//sky103up.png",
+			//	"Assets//Images//sky103dn.png", "Assets//Images//sky103rt.png", "Assets//Images//sky103lf.png", 500.0f);
+			skybox = new Skybox("Assets//Images//grimmnightft.png", "Assets//Images//grimmnightbk.png", "Assets//Images//grimmnightup.png",
+				"Assets//Images//grimmnightdn.png", "Assets//Images//grimmnightrt.png", "Assets//Images//grimmnightlf.png", 500.0f);
 		}
 		//billboard = new Billboard("grass5.png"s, glm::vec3(4.87f, 1.735f, 8.7f), glm::vec3(0.4f));
 
@@ -136,10 +141,12 @@ namespace Agata {
 
 		{
 			Agata::Timer wate("Water Loading");
-			water = new Water(glm::vec3(5.0f, 1.11f, 4.658f), glm::vec3(4.0f, 1.0f, 5.0f), "dudv.png", "normalMap.png", 480, 360);
+			water = new Water(glm::vec3(5.0f, 1.11f, 4.658f), glm::vec3(4.0f, 1.0f, 5.0f), "dudv.png", "normalMap.png", 640, 480);
 		}
 
-		light = new Light(glm::vec3(11.0f, 0.0f, -10.0f), glm::vec3(255.0f / 255.0f, 128.0f / 255.0f, 128.0f / 255.0f));
+		//light = new Light(glm::vec3(11.0f, 0.0f, -10.0f), glm::vec3(255.0f / 255.0f, 128.0f / 255.0f, 128.0f / 255.0f));
+		//light = new Light(glm::vec3(11.0f, 14.5652, -3.7059), glm::vec3(1, 1, 1));
+		 light = new Light(glm::vec3(11.0f, 14.5652, -3.7059), glm::vec3(20.0f / 255.0f, 20.0f / 255.0f, 20.0f / 255.0f));
 
 		grass = new GrassManager(3);
 		grass->addGrassUnit(glm::vec3(5.0f, 1.935f, 13.0f), glm::vec3(0.4f), 0);
@@ -194,46 +201,51 @@ namespace Agata {
 
 			//m_Camera->setPosition(light->getPosition());
 
-			float r = glm::sqrt(1600 / (4 * pow(cos(glm::radians(lightAngle)), 2) + pow(sin(glm::radians(lightAngle)), 2)));
-			float x = r * cos(glm::radians(lightAngle));
-			float y = r * sin(glm::radians(lightAngle));
+			//float r = glm::sqrt(1600 / (4 * pow(cos(glm::radians(lightAngle)), 2) + pow(sin(glm::radians(lightAngle)), 2)));
+			//float x = r * cos(glm::radians(lightAngle));
+			//float y = r * sin(glm::radians(lightAngle));
+			//
+			//light->setPositionY(y * 0.5f);
+			//light->setPositionZ(x + 10);
+			//
+			//float intensity = glm::clamp(glm::sin(glm::radians(lightAngle)), 0.2f, 0.8f);
+			//
+			//if (lightAngle >= 0) {
+			//	animatedModel->getMaterialRef().setDiffuse(glm::vec3(intensity + 0.2f));
+			//	terrain->setDiffuse(glm::vec3(intensity + 0.2f));
+			//}
+			//else {
+			//	animatedModel->getMaterialRef().setDiffuse(glm::vec3(0.0f));
+			//	terrain->setDiffuse(glm::vec3(0.0f));
+			//}
+			//
+			//animatedModel->getMaterialRef().setAmbient(glm::vec3(intensity));
+			//terrain->setAmbient(glm::vec3(glm::clamp(intensity, 0.2f, 0.4f)));
+			//
+			////(i > -180.0f) ? i -= 0.1f : i = 180.0f;
+			//(lightAngle > 0) ? lightAngle -= 0.1f : lightAngle = 180.0f;
+			//
+			//if (lightAngle < 160.0f && lightAngle > 120.0f) {
+			//
+			//	light->setColourG(0.00125f);
+			//	light->setColourB(0.00125f);
+			//
+			//}
+			//
+			//if (lightAngle < 60.0f && lightAngle > 20.0f) {
+			//
+			//	light->setColourG(-0.00125f);
+			//	light->setColourB(-0.00125f);
+			//
+			//}
 
-			light->setPositionY(y * 0.5f);
-			light->setPositionZ(x + 10);
+			terrain->setAmbient(glm::vec3(0.4f));
+			terrain->setDiffuse(glm::vec3(1.0f));
 
-			float intensity = glm::clamp(glm::sin(glm::radians(lightAngle)), 0.2f, 0.8f);
-
-			if (lightAngle >= 0) {
-				animatedModel->getMaterialRef().setDiffuse(glm::vec3(intensity + 0.2f));
-				terrain->setDiffuse(glm::vec3(intensity + 0.2f));
+			if (imGuiActive) {
+				imGui->newFrame();
+				imGui->draw();
 			}
-			else {
-				animatedModel->getMaterialRef().setDiffuse(glm::vec3(0.0f));
-				terrain->setDiffuse(glm::vec3(0.0f));
-			}
-
-			animatedModel->getMaterialRef().setAmbient(glm::vec3(intensity));
-			terrain->setAmbient(glm::vec3(glm::clamp(intensity, 0.2f, 0.4f)));
-
-			//(i > -180.0f) ? i -= 0.1f : i = 180.0f;
-			(lightAngle > 0) ? lightAngle -= 0.1f : lightAngle = 180.0f;
-
-			if (lightAngle < 160.0f && lightAngle > 120.0f) {
-
-				light->setColourG(0.00125f);
-				light->setColourB(0.00125f);
-
-			}
-
-			if (lightAngle < 60.0f && lightAngle > 20.0f) {
-
-				light->setColourG(-0.00125f);
-				light->setColourB(-0.00125f);
-
-			}
-
-			imGui->newFrame();
-			imGui->draw();
 
 			float ts = glfwGetTime();
 
@@ -248,7 +260,7 @@ namespace Agata {
 			water->startReflection();
 			m_Renderer.clear(0.1f, 0.1f, 0.1f, 1.0f);
 			//animatedModel->draw(shaderModel, *light, ts, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
-			terrain->draw(shaderTerrain, *light, glm::vec4(0.0f, 1.0f, 0.0f, -water->getHeight()));
+			terrain->draw(shaderTerrain, *light, glm::vec4(0.0f, 1.0f, 0.0f, -water->getHeight()+1.0f));
 			skybox->draw(shaderSkybox, *light);
 			//billboard->draw(shaderBill, *light);
 			fire->draw(shaderFire, dt);
@@ -285,7 +297,7 @@ namespace Agata {
 			water->draw(shaderWater, *light);
 
 			shaderCubeMap->bind();
-			shaderCubeMap->sendInt1("u_CubeMap", skybox->getTexture().bind(0));
+			shaderCubeMap->sendInt1("u_CubeMap", texture->bind(1));
 			model->draw(shaderCubeMap, *light);
 
 			//m_Camera->setSensitivity(124.44444f);
@@ -295,6 +307,7 @@ namespace Agata {
 
 			skybox->updateRotation(3.0f * dt);
 
+			if (imGuiActive)
 			imGui->render();
 
 			m_Window->update();
@@ -323,8 +336,8 @@ namespace Agata {
 
 	void Scene3D::mouseMoveEvent(MouseMoveEvent e) {
 
-		m_Camera->move(m_Window->getHandler(), e);
-		m_InvertCamera->move(m_Window->getHandler(), e);
+		//m_Camera->move(m_Window->getHandler(), e);
+		//m_InvertCamera->move(m_Window->getHandler(), e);
 
 		//Log::info("%s", e.toString().c_str());
 		//Log::info("%.4f , %.4f",(e.getX() / m_Window->getWidth()) * 2.0f - 1.0f, 
@@ -336,6 +349,14 @@ namespace Agata {
 
 		if (e.getKeyCode() == GLFW_KEY_ESCAPE && e.getAction() == GLFW_PRESS) {
 			m_Running = false;
+		}
+
+		if (e.getKeyCode() == GLFW_KEY_O && e.getAction() == GLFW_PRESS) {
+			saveImage("ejemplo.bmp", m_Window->getHandler());
+		}
+
+		if (e.getKeyCode() == GLFW_KEY_Y && e.getAction() == GLFW_PRESS) {
+			imGuiActive = !imGuiActive;
 		}
 
 		if (e.getKeyCode() == GLFW_KEY_P && e.getAction() == GLFW_PRESS) { // Abstract this pls, no GLFW in Scene Class
@@ -366,11 +387,11 @@ namespace Agata {
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		//ImGui::SliderFloat3("Light Position:", &light->getPosition()[0], -100, 100);
 		//ImGui::SliderFloat3("Light Colour:", &light->getColour()[0], 0, 1);
-		ImGui::SliderFloat3("Player Position:", &m_Camera->getPosition()[0], 0, 20);
-		//ImGui::SliderFloat3("Player Forward:", &m_Camera->getForward()[0], -100, 100);
-		//ImGui::SliderFloat3("Player Right:", &m_Camera->getRight()[0], -100, 100);
-		//ImGui::SliderFloat("Player Pitch:", &m_Camera->getPitch(), -100, 100);
-		//ImGui::SliderFloat("Player Yaw:", &m_Camera->getYaw(), -100, 100);
+		ImGui::InputFloat3("Player Position:", &m_Camera->getPosition()[0]);
+		ImGui::InputFloat3("Player Forward:", &m_Camera->getForward()[0]);
+		ImGui::InputFloat3("Player Right:", &m_Camera->getRight()[0]);
+		ImGui::InputFloat("Player Pitch:", &m_Camera->getPitch());
+	    ImGui::InputFloat("Player Yaw:", &m_Camera->getYaw());
 		//ImGui::SliderFloat3("Water Position:", &water->getPositionRef()[0], -20, 20);
 		//ImGui::SliderFloat3("Water Scale:", &water->getScaleRef()[0], -20, 20);
 		//ImGui::SliderFloat("Tiling Factor:", &terrain->getTilingFactorRef(), 0.0f, 100.0f);
@@ -391,4 +412,18 @@ namespace Agata {
 
 	}
 
+	void saveImage(std::string filepath, GLFWwindow* w) {
+		int width, height;
+		glfwGetFramebufferSize(w, &width, &height);
+		GLsizei nrChannels = 3;
+		GLsizei stride = nrChannels * width;
+		stride += (stride % 4) ? (4 - stride % 4) : 0;
+		GLsizei bufferSize = stride * height;
+		std::vector<char> buffer(bufferSize);
+		//glPixelStorei(GL_PACK_ALIGNMENT, 4);
+		//glReadBuffer(GL_FRONT);
+		glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, buffer.data());
+		stbi_flip_vertically_on_write(true);
+		stbi_write_png(filepath.c_str(), width, height, nrChannels, buffer.data(), stride);
+	}
 }

@@ -53,14 +53,14 @@ namespace Agata {
 	uint32_t Texture3D::bind(uint32_t slot) const {
 
 		glActiveTexture(GL_TEXTURE0 + slot);
-		glBindTexture(GL_TEXTURE_2D, m_ID);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_ID);
 		return slot;
 
 	}
 
 	void Texture3D::unbind() const {
 
-		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
 	}
 
